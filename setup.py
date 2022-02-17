@@ -32,7 +32,7 @@ setuptools.setup(
     long_description=get_long_description(),
     long_description_content_type="text/markdown",
     url="https://github.com/aureguerrero/sahi",
-    packages=setuptools.find_packages(exclude=["demo", "docs", "resources", "tests"]),
+    packages=setuptools.find_packages(exclude=["demo", "docs", "tests"]),
     python_requires=">=3.7",
     install_requires=get_requirements(),
     extras_require={
@@ -40,7 +40,7 @@ setuptools.setup(
         "dev": ["black==21.7b0", "flake8==3.9.2", "isort==5.9.2", "jupyterlab==3.0.14"],
     },
     classifiers=[
-        "License :: OSI Approved :: MIT License",
+  #      "License :: OSI Approved :: MIT License",
         "Operating System :: OS Independent",
         "Intended Audience :: Developers",
         "Intended Audience :: Science/Research",
