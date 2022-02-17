@@ -240,8 +240,8 @@ class Mask:
         # arrange starting ending indexes
         starting_pixel = [np.min(np.where(self.bool_mask==True),axis=1)[0],np.min(np.where(self.bool_mask==True),axis=1)[1]]
         ending_pixel = [
-            min(starting_pixel[0] + tam[0], self.full_shape_width),
-            min(starting_pixel[1] + tam[1], self.full_shape_height),
+            starting_pixel[0] + tam[0],
+            starting_pixel[1] + tam[1],
         ]
         
         # convert sliced mask to full mask
@@ -269,7 +269,7 @@ class Mask:
 
         return Mask(
             mask_fullsized,
-            shift_amount=[0, 0],
+            shift_amount=[self.shift_x+starting_pixel[0],self.shift_y+starting_pixel[1]],
             full_shape=self.full_shape,
         )
 
