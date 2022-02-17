@@ -110,24 +110,19 @@ def get_prediction(
     )
 
 
-def get_sliced_prediction(
-    image,
-    detection_model=None,
-    image_size: int = None,
-    slice_height: int = 512,
-    slice_width: int = 512,
-    overlap_height_ratio: float = 0.2,
-    overlap_width_ratio: float = 0.2,
-    perform_standard_pred: bool = True,
-    postprocess_type: str = "GREEDYNMM",
-    postprocess_match_metric: str = "IOS",
-    postprocess_match_threshold: float = 0.5,
-    postprocess_class_agnostic: bool = False,
-    verbose: int = 1,
+def get_sliced_prediction(image, detection_model=None, image_size: int = None,
+                          slice_height: int = 512, slice_width: int = 512,
+                          overlap_height_ratio: float = 0.2,
+                          overlap_width_ratio: float = 0.2,
+                          perform_standard_pred: bool = True,
+                          postprocess_type: str = "GREEDYNMM",
+                          postprocess_match_metric: str = "IOS",
+                          postprocess_match_threshold: float = 0.8,
+                          postprocess_class_agnostic: bool = False,
+                          verbose: int = 1,
 ) -> PredictionResult:
     """
     Function for slice image + get predicion for each slice + combine predictions in full image.
-
     Args:
         image: str or np.ndarray
             Location of image or numpy image matrix to slice
@@ -164,7 +159,6 @@ def get_sliced_prediction(
             0: no print
             1: print number of slices (default)
             2: print number of slices and slice/prediction durations
-
     Returns:
         A Dict with fields:
             object_prediction_list: a list of sahi.prediction.ObjectPrediction
@@ -257,8 +251,20 @@ def get_sliced_prediction(
         # convert sliced predictions to full predictions
         for object_prediction in prediction_result.object_prediction_list:
             if object_prediction:  # if not empty
-                object_prediction_list.append(object_prediction.get_shifted_object_prediction())
+                caja=object_prediction.bbox.get_shifted_box().to_voc_bbox()
+                b=ObjectPrediction(
+                bbox=object_prediction.bbox.get_shifted_box().to_voc_bbox(),
+                category_id=object_prediction.category.id,
+                score=object_prediction.score.value,
+                bool_mask=object_prediction.mask.get_shifted_mask().bool_mask[caja[1]:caja[3],caja[0]:caja[2]],
+                category_name=object_prediction.category.name,
+                shift_amount=[0, 0],
+                full_shape=object_prediction.mask.get_shifted_mask().full_shape,
+                )
+                b.bbox.minx, b.bbox.miny, b.bbox.maxx, b.bbox.maxy=caja[0], caja[1], caja[2], caja[3]
+                object_prediction_list.append(b)
     # perform standard prediction
+    print(len(object_prediction_list))
     if num_slices > 1 and perform_standard_pred:
         prediction_result = get_prediction(
             image=image,
@@ -268,7 +274,22 @@ def get_sliced_prediction(
             full_shape=None,
             postprocess=None,
         )
-        object_prediction_list.extend(prediction_result.object_prediction_list)
+        for object_prediction in prediction_result.object_prediction_list:
+            if object_prediction:  # if not empty
+                caja=object_prediction.bbox.get_shifted_box().to_voc_bbox()
+                b=ObjectPrediction(
+                bbox=object_prediction.bbox.get_shifted_box().to_voc_bbox(),
+                category_id=object_prediction.category.id,
+                score=object_prediction.score.value,
+                bool_mask=object_prediction.mask.get_shifted_mask().bool_mask[caja[1]:caja[3],caja[0]:caja[2]],
+                category_name=object_prediction.category.name,
+                shift_amount=[0, 0],
+                full_shape=object_prediction.mask.get_shifted_mask().full_shape,
+                )
+                b.bbox.minx, b.bbox.miny, b.bbox.maxx, b.bbox.maxy=caja[0], caja[1], caja[2], caja[3]
+                object_prediction_list.append(b)
+    print(len(object_prediction_list))
+#return objet_prediction_list
 
     time_end = time.time() - time_start
     durations_in_seconds["prediction"] = time_end
@@ -288,11 +309,10 @@ def get_sliced_prediction(
     # merge matching predictions
     if len(object_prediction_list) > 0:
         object_prediction_list = postprocess(object_prediction_list)
-
+#    return object_prediction_list
     return PredictionResult(
         image=image, object_prediction_list=object_prediction_list, durations_in_seconds=durations_in_seconds
     )
-
 
 def predict(
     model_type: str = "mmdet",
