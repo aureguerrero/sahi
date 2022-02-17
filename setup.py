@@ -26,13 +26,13 @@ def get_version():
 setuptools.setup(
     name="sahi",
     version=get_version(),
-    author="OBSS",
+    author="aureguerrero",
     license="MIT",
     description="A vision library for performing sliced inference on large images/small objects",
     long_description=get_long_description(),
     long_description_content_type="text/markdown",
-    url="https://github.com/obss/sahi",
-    packages=setuptools.find_packages(exclude=["demo", "docs", "resources", "tests"]),
+    url="https://github.com/aureguerrero/sahi",
+    packages=setuptools.find_packages(exclude=["demo", "docs", "tests"]),
     python_requires=">=3.7",
     install_requires=get_requirements(),
     extras_require={
