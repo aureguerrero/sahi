@@ -158,13 +158,15 @@ def has_match(
 
 
 def get_merged_mask(pred1: ObjectPrediction, pred2: ObjectPrediction) -> Mask:
-    mask1 = pred1.mask
-    mask2 = pred2.mask
-    union_mask = np.logical_or(mask1.bool_mask, mask2.bool_mask)
+    mask1=np.zeros([np.max([pred1.bbox.maxy-pred1.bbox.miny,pred2.bbox.maxy-pred2.bbox.miny]),np.max([pred1.bbox.maxx-pred1.bbox.minx,pred2.bbox.maxx-pred2.bbox.minx])])
+    mask2=mask1.copy()
+    mask1[0:pred1.bbox.maxy-pred1.bbox.miny,0:pred1.bbox.maxx-pred1.bbox.minx] = pred1.mask.bool_mask
+    mask2[0:pred2.bbox.maxy-pred2.bbox.miny,0:pred2.bbox.maxx-pred2.bbox.minx] = pred2.mask.bool_mask
+    union_mask = np.logical_or(mask1, mask2)
     return Mask(
         bool_mask=union_mask,
-        full_shape=mask1.full_shape,
-        shift_amount=mask1.shift_amount,
+        full_shape=pred1.mask.full_shape,
+        shift_amount=pred1.mask.shift_amount,
     )
 
 
