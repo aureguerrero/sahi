@@ -27,7 +27,7 @@ setuptools.setup(
     name="sahi",
     version=get_version(),
     author="aureguerrero",
-#    license="MIT",
+    license="MIT",
     description="A vision library for performing sliced inference on large images/small objects",
     long_description=get_long_description(),
     long_description_content_type="text/markdown",
@@ -40,7 +40,7 @@ setuptools.setup(
         "dev": ["black==21.7b0", "flake8==3.9.2", "isort==5.9.2", "jupyterlab==3.0.14"],
     },
     classifiers=[
-  #      "License :: OSI Approved :: MIT License",
+        "License :: OSI Approved :: MIT License",
         "Operating System :: OS Independent",
         "Intended Audience :: Developers",
         "Intended Audience :: Science/Research",
