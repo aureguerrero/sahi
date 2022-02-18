@@ -261,7 +261,7 @@ def get_sliced_prediction(
                 b=object_prediction.get_shifted_object_prediction()
                 b.bbox.minx, b.bbox.miny, b.bbox.maxx, b.bbox.maxy=caja[0]+b.mask.shift_x, caja[1]+b.mask.shift_y, caja[2]+b.mask.shift_x, caja[3]+b.mask.shift_y
                 object_prediction_list.append(b)
-        print(len(object_prediction_list))
+    print(len(object_prediction_list))
                 
     # perform standard prediction
     if num_slices > 1 and perform_standard_pred:
