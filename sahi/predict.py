@@ -236,7 +236,7 @@ def get_sliced_prediction(
         tqdm.write(f"Performing prediction on {num_slices} number of slices.")
     object_prediction_list = []
     # perform sliced prediction
-    for group_ind in range(num_group):
+    for group_ind in tqdm(range(num_group)):
         # prepare batch (currently supports only 1 batch)
         image_list = []
         shift_amount_list = []
@@ -255,7 +255,7 @@ def get_sliced_prediction(
             ],
         )
         # convert sliced predictions to full predictions
-        for object_prediction in prediction_result.object_prediction_list:
+        for object_prediction in tqdm(prediction_result.object_prediction_list):
             if object_prediction:  # if not empty
                 caja=object_prediction.bbox.get_shifted_box().to_voc_bbox()
                 b=object_prediction.get_shifted_object_prediction()
@@ -272,7 +272,7 @@ def get_sliced_prediction(
             full_shape=None,
             postprocess=None,
         )
-        for object_prediction in prediction_result.object_prediction_list:
+        for object_prediction in tqdm(prediction_result.object_prediction_list):
             if object_prediction:  # if not empty
                 caja=object_prediction.bbox.get_shifted_box().to_voc_bbox()
                 b=object_prediction.get_shifted_object_prediction()
