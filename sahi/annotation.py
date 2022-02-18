@@ -234,42 +234,30 @@ class Mask:
         # Confirm full_shape is specified
         assert (self.full_shape_height is not None) and (self.full_shape_width is not None), "full_shape is None"
         # init full mask
-        tam=list(np.max(np.where(self.bool_mask==True),axis=1)-np.min(np.where(self.bool_mask==True),axis=1))
-        mask_fullsized = np.zeros(tam,dtype=bool)
-   
+        mask_fullsized = np.full(
+            (
+                self.full_shape_height,
+                self.full_shape_width,
+            ),
+            0,
+            dtype="float32",
+        )
+
         # arrange starting ending indexes
-        starting_pixel = [np.min(np.where(self.bool_mask==True),axis=1)[0],np.min(np.where(self.bool_mask==True),axis=1)[1]]
+        starting_pixel = [self.shift_x, self.shift_y]
         ending_pixel = [
-            starting_pixel[0] + tam[0],
-            starting_pixel[1] + tam[1],
+            min(starting_pixel[0] + self.bool_mask.shape[1], self.full_shape_width),
+            min(starting_pixel[1] + self.bool_mask.shape[0], self.full_shape_height),
         ]
-        
+
         # convert sliced mask to full mask
-        mask_fullsized[0: tam[0], 0 : tam[1]] = self.bool_mask[starting_pixel[0] : ending_pixel[0],starting_pixel[1]:ending_pixel[1]]
-#         mask_fullsized = np.full(
-#             (
-#                 self.full_shape_height,
-#                 self.full_shape_width,
-#             ),
-#             0,
-#             dtype="float32",
-#         )
-
-#         # arrange starting ending indexes
-#         starting_pixel = [self.shift_x, self.shift_y]
-#         ending_pixel = [
-#             min(starting_pixel[0] + self.bool_mask.shape[1], self.full_shape_width),
-#             min(starting_pixel[1] + self.bool_mask.shape[0], self.full_shape_height),
-#         ]
-
-#         # convert sliced mask to full mask
-#         mask_fullsized[starting_pixel[1] : ending_pixel[1], starting_pixel[0] : ending_pixel[0]] = self.bool_mask[
-#             : ending_pixel[1] - starting_pixel[1], : ending_pixel[0] - starting_pixel[0]
-#         ]
+        mask_fullsized[starting_pixel[1] : ending_pixel[1], starting_pixel[0] : ending_pixel[0]] = self.bool_mask[
+            : ending_pixel[1] - starting_pixel[1], : ending_pixel[0] - starting_pixel[0]
+        ]
 
         return Mask(
             mask_fullsized,
-            shift_amount=[self.shift_x+starting_pixel[0],self.shift_y+starting_pixel[1]],
+            shift_amount=[0, 0],
             full_shape=self.full_shape,
         )
 
