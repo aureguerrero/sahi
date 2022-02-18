@@ -257,7 +257,11 @@ def get_sliced_prediction(
         # convert sliced predictions to full predictions
         for object_prediction in prediction_result.object_prediction_list:
             if object_prediction:  # if not empty
-                object_prediction_list.append(object_prediction.get_shifted_object_prediction())
+                caja=object_prediction.bbox.get_shifted_box().to_voc_bbox()
+                b=object_prediction.get_shifted_object_prediction()
+                b.bbox.minx, b.bbox.miny, b.bbox.maxx, b.bbox.maxy=caja[0]+b.mask.shift_x, caja[1]+b.mask.shift_y, caja[2]+b.mask.shift_x, caja[3]+b.mask.shift_y
+                object_prediction_list.append(b)
+                
     # perform standard prediction
     if num_slices > 1 and perform_standard_pred:
         prediction_result = get_prediction(
@@ -268,7 +272,12 @@ def get_sliced_prediction(
             full_shape=None,
             postprocess=None,
         )
-        object_prediction_list.extend(prediction_result.object_prediction_list)
+        for object_prediction in prediction_result.object_prediction_list:
+            if object_prediction:  # if not empty
+                caja=object_prediction.bbox.get_shifted_box().to_voc_bbox()
+                b=object_prediction.get_shifted_object_prediction()
+                b.bbox.minx, b.bbox.miny, b.bbox.maxx, b.bbox.maxy=caja[0]+b.mask.shift_x, caja[1]+b.mask.shift_y, caja[2]+b.mask.shift_x, caja[3]+b.mask.shift_y
+                object_prediction_list.append(b)
 
     time_end = time.time() - time_start
     durations_in_seconds["prediction"] = time_end
