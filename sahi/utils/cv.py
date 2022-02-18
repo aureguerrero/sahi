@@ -347,8 +347,8 @@ def visualize_object_predictions(
             # deepcopy mask so that original is not altered
             mask1 = object_prediction.mask.bool_mask
             mask = np.zeros(object_prediction.mask.full_shape,dtype=bool)
-            mask[object_prediction.bbox.to_voc_bbox()[1]:object_prediction.bbox.to_voc_bbox()[1]+np.shape(mask1)[0],
-                 object_prediction.bbox.to_voc_bbox()[0]:object_prediction.bbox.to_voc_bbox()[0]+np.shape(mask1)[1]]=mask1
+            mask[object_prediction.bbox.to_voc_bbox()[1]:object_prediction.bbox.to_voc_bbox()[1]+np.shape(mask1)[1],
+                 object_prediction.bbox.to_voc_bbox()[0]:object_prediction.bbox.to_voc_bbox()[0]+np.shape(mask1)[0]]=mask1
             # draw mask
             rgb_mask = apply_color_mask(mask, color)
             image = cv2.addWeighted(image, 1, rgb_mask, 0.4, 0)
