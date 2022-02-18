@@ -235,7 +235,7 @@ class Mask:
         assert (self.full_shape_height is not None) and (self.full_shape_width is not None), "full_shape is None"
         # init full mask
         tam=list(np.max(np.where(self.bool_mask==True),axis=1)-np.min(np.where(self.bool_mask==True),axis=1))
-        mask_fullsized = np.zeros(tam),dtype=bool)
+        mask_fullsized = np.zeros(tam,dtype=bool)
    
         # arrange starting ending indexes
         starting_pixel = [np.min(np.where(self.bool_mask==True),axis=1)[0],np.min(np.where(self.bool_mask==True),axis=1)[1]]
