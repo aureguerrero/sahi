@@ -535,7 +535,8 @@ class ObjectAnnotation:
             # https://github.com/obss/sahi/issues/235
             if bbox_from_bool_mask is not None:
                 bbox = bbox_from_bool_mask
-                self.mask.bool_mask=bool_mask[bbox[1]:bbox[3],bbox[0]:bbox[2]]
+                caja=[np.min(np.where(bool_mask == True),axis=1),np.max(np.where(bool_mask == True),axis=1)]
+                self.mask.bool_mask=bool_mask[caja[0][0]:caja[1][0],caja[0][1]:caja[1][1]]
             else:
                 raise ValueError("Invalid boolean mask.")
         else:
@@ -653,7 +654,7 @@ class ObjectAnnotation:
             return ObjectAnnotation(
                 bbox=self.bbox.get_shifted_box().to_voc_bbox(),
                 category_id=self.category.id,
-                bool_mask=self.mask.get_shifted_mask().bool_mask,
+                bool_mask=self.mask.bool_mask,
                 category_name=self.category.name,
                 shift_amount=[0, 0],
                 full_shape=self.mask.get_shifted_mask().full_shape,
