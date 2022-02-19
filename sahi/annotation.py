@@ -262,7 +262,7 @@ class Mask:
         ]
 ###$$##
         return Mask(
-            mask_fullsized[starting_pixel[1]+punto[0] : ending_pixel[1]+1, starting_pixel[0]+punto[1] : ending_pixel[0]+1],
+            mask_fullsized[starting_pixel[1]+punto[0] : ending_pixel[1], starting_pixel[0]+punto[1] : ending_pixel[0]],
             shift_amount=[self.shift_x+punto[1], self.shift_y+punto[0]],
             full_shape=self.full_shape,
         )
@@ -542,7 +542,7 @@ class ObjectAnnotation:
             if bbox_from_bool_mask is not None:
                 bbox = bbox_from_bool_mask
                 caja=[np.min(np.where(bool_mask == True),axis=1),np.max(np.where(bool_mask == True),axis=1)]
-                self.mask.bool_mask=bool_mask[0:caja[1][0],0:caja[1][1]]
+                self.mask.bool_mask=bool_mask[0:caja[1][0]+1,0:caja[1][1]+1]
             else:
                 raise ValueError("Invalid boolean mask.")
         else:
