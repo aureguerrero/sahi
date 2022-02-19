@@ -258,7 +258,7 @@ class Mask:
 
         # convert sliced mask to full mask
         mask_fullsized[starting_pixel[1] : ending_pixel[1], starting_pixel[0] : ending_pixel[0]] = self.bool_mask[
-            : ending_pixel[1] - starting_pixel[1], : ending_pixel[0] - starting_pixel[0]
+            : ending_pixel[1] - starting_pixel[1]+1, : ending_pixel[0] - starting_pixel[0]+1
         ]
 ###$$##
         return Mask(
