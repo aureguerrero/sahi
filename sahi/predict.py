@@ -280,7 +280,7 @@ def get_sliced_prediction(
                 object_prediction.mask.shift_x=x[0]
                 object_prediction.mask.shift_y=x[1]
                 object_prediction.mask.bool_mask=object_prediction.mask.bool_mask[x[1]:x[1]+x[3]+1,x[0]:x[0]+x[2]+1]
-                object_prediction_list.append(object_prediction.get_shifted_object_prediction())
+                object_prediction_list.append(object_prediction)
 
         print(len(object_prediction_list))
         
