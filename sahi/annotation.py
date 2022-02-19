@@ -252,8 +252,8 @@ class Mask:
         #starting_pixel = [self.shift_x+punto[1], self.shift_y+punto[0]]
         starting_pixel = [self.shift_x,self.shift_y]
         ending_pixel = [
-            min(starting_pixel[0] + self.bool_mask.shape[1], self.full_shape_width),
-            min(starting_pixel[1] + self.bool_mask.shape[0], self.full_shape_height),
+            min(starting_pixel[0] + self.bool_mask.shape[1]+1, self.full_shape_width),
+            min(starting_pixel[1] + self.bool_mask.shape[0]+1, self.full_shape_height),
         ]
 
         # convert sliced mask to full mask
