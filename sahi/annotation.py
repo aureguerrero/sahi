@@ -537,7 +537,7 @@ class ObjectAnnotation:
             bbox_from_bool_mask = get_bbox_from_bool_mask(bool_mask)
             # https://github.com/obss/sahi/issues/235
             if bbox_from_bool_mask is not None:
-                bbox = bbox_from_bool_mask
+                bbox = [bbox_from_bool_mask[i]+bbox[i] for i in range(4)]
                 caja=[np.min(np.where(bool_mask == True),axis=1),np.max(np.where(bool_mask == True),axis=1)]
                 self.mask.bool_mask=bool_mask[caja[0][0]:caja[1][0],caja[0][1]:caja[1][1]]
             else:
