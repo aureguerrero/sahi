@@ -260,7 +260,7 @@ class Mask:
 ###$$##
         return Mask(
             mask_fullsized,
-            shift_amount=[punto[1],punto[0]]
+            shift_amount=[punto[1],punto[0]],
             full_shape=self.full_shape,
         )
 
