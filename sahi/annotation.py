@@ -540,7 +540,7 @@ class ObjectAnnotation:
             if bbox_from_bool_mask is not None:
                 bbox = bbox_from_bool_mask
                 caja=[np.min(np.where(bool_mask == True),axis=1),np.max(np.where(bool_mask == True),axis=1)]
-                self.mask.bool_mask=bool_mask[:caja[1][0],:caja[1][1]]
+                self.mask.bool_mask=bool_mask[0:caja[1][0],0:caja[1][1]]
             else:
                 raise ValueError("Invalid boolean mask.")
         else:
