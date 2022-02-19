@@ -240,7 +240,7 @@ class Mask:
                 self.full_shape_width,
             ),
             0,
-            dtype="float32",
+            dtype="bool",
         )
 
         # arrange starting ending indexes
