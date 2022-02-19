@@ -72,6 +72,7 @@ class ObjectPrediction(ObjectAnnotation):
                 the form of [height, width]
         """
         self.score = PredictionScore(score)
+        self.bbox.to_voc_bbox()=bbox.to_voc_bbox()
         super().__init__(
             bbox=bbox,
             category_id=category_id,
