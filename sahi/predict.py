@@ -257,7 +257,9 @@ def get_sliced_prediction(
         # convert sliced predictions to full predictions
         for object_prediction in prediction_result.object_prediction_list:
             if object_prediction:  # if not empty
-                object_prediction_list.append(object_prediction.get_shifted_object_prediction())
+                b=object_prediction.get_shifted_object_prediction()
+                b.bbox=b.bbox.get_shifted_box()
+                object_prediction_list.append(b)
     print(len(object_prediction_list))
                 
     # perform standard prediction
@@ -277,10 +279,6 @@ def get_sliced_prediction(
                 object_prediction.bbox.shift_y=x[1]
                 object_prediction.mask.shift_x=x[0]
                 object_prediction.mask.shift_y=x[1]
-                object_prediction.bbox.minx=0
-                object_prediction.bbox.miny=0
-                object_prediction.bbox.maxx=x[2]+1
-                object_prediction.bbox.maxy=x[3]+1
                 object_prediction.mask.bool_mask=object_prediction.mask.bool_mask[x[1]:x[1]+x[3]+1,x[0]:x[0]+x[2]+1]
                 object_prediction_list.append(object_prediction.get_shifted_object_prediction())
 
