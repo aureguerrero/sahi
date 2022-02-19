@@ -255,12 +255,9 @@ def get_sliced_prediction(
             ],
         )
         # convert sliced predictions to full predictions
-        for object_prediction in tqdm(prediction_result.object_prediction_list):
+        for object_prediction in prediction_result.object_prediction_list:
             if object_prediction:  # if not empty
-                caja=object_prediction.bbox.get_shifted_box().to_voc_bbox()
-                b=object_prediction.get_shifted_object_prediction()
-                b.bbox.minx, b.bbox.miny, b.bbox.maxx, b.bbox.maxy=caja[0]+b.mask.shift_x, caja[1]+b.mask.shift_y, caja[2]+b.mask.shift_x, caja[3]+b.mask.shift_y
-                object_prediction_list.append(b)
+                object_prediction_list.append(object_prediction.get_shifted_object_prediction())
     print(len(object_prediction_list))
                 
     # perform standard prediction
@@ -273,12 +270,20 @@ def get_sliced_prediction(
             full_shape=None,
             postprocess=None,
         )
-        for object_prediction in tqdm(prediction_result.object_prediction_list):
+        for object_prediction in prediction_result.object_prediction_list:
             if object_prediction:  # if not empty
-                caja=object_prediction.bbox.get_shifted_box().to_voc_bbox()
-                b=object_prediction.get_shifted_object_prediction()
-                b.bbox.minx, b.bbox.miny, b.bbox.maxx, b.bbox.maxy=caja[0]+b.mask.shift_x, caja[1]+b.mask.shift_y, caja[2]+b.mask.shift_x, caja[3]+b.mask.shift_y
-                object_prediction_list.append(b)
+                x = object_prediction.bbox.to_coco_bbox()
+                object_prediction.bbox.shift_x=x[0]
+                object_prediction.bbox.shift_y=x[1]
+                object_prediction.mask.shift_x=x[0]
+                object_prediction.mask.shift_y=x[1]
+                object_prediction.bbox.minx=0
+                object_prediction.bbox.miny=0
+                object_prediction.bbox.maxx=x[2]+1
+                object_prediction.bbox.maxy=x[3]+1
+                object_prediction.mask.bool_mask=object_prediction.mask.bool_mask[x[1]:x[1]+x[3]+1,x[0]:x[0]+x[2]+1]
+                object_prediction_list.append(object_prediction.get_shifted_object_prediction())
+
         print(len(object_prediction_list))
         
     time_end = time.time() - time_start
