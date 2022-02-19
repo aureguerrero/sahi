@@ -244,7 +244,8 @@ class Mask:
         )
 
         # arrange starting ending indexes
-        starting_pixel = [self.shift_x, self.shift_y]
+        punto=np.min(np.where(self.bool_mask == True),axis=1)
+        starting_pixel = [self.shift_x+punto[1], self.shift_y+punto[0]]
         ending_pixel = [
             min(starting_pixel[0] + self.bool_mask.shape[1], self.full_shape_width),
             min(starting_pixel[1] + self.bool_mask.shape[0], self.full_shape_height),
@@ -654,7 +655,7 @@ class ObjectAnnotation:
             return ObjectAnnotation(
                 bbox=self.bbox.get_shifted_box().to_voc_bbox(),
                 category_id=self.category.id,
-                bool_mask=self.mask.bool_mask,
+                bool_mask=self.mask.get_shifted_mask().bool_mask,
                 category_name=self.category.name,
                 shift_amount=[0, 0],
                 full_shape=self.mask.get_shifted_mask().full_shape,
