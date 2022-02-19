@@ -95,7 +95,7 @@ class ObjectPrediction(ObjectAnnotation):
                 score=self.score.value,
                 bool_mask=self.mask.get_shifted_mask().bool_mask,
                 category_name=self.category.name,
-                shift_amount= [0,0] #selft.get_shifted_mask().shift_amount,#[0, 0],
+                shift_amount= [0,0], #selft.get_shifted_mask().shift_amount,#[0, 0],
                 full_shape=self.mask.get_shifted_mask().full_shape,
             )
         else:
