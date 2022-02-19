@@ -80,7 +80,9 @@ class BoundingBox:
             self.maxx + self.shift_x,
             self.maxy + self.shift_y,
         ]
-        return BoundingBox(box)
+        amount=[self.minx + self.shift_x,
+            self.miny + self.shift_y]
+        return BoundingBox(box,amount)
 
     def __repr__(self):
         return f"BoundingBox: <{(self.minx, self.miny, self.maxx, self.maxy)}, w: {self.maxx - self.minx}, h: {self.maxy - self.miny}>"
