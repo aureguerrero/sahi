@@ -181,8 +181,8 @@ def get_merged_bbox(pred1: ObjectPrediction, pred2: ObjectPrediction) -> Boundin
     box1: List[int] = pred1.bbox.to_voc_bbox()
     box2: List[int] = pred2.bbox.to_voc_bbox()
     bbox = BoundingBox(box=calculate_box_union(box1, box2))
-    bbox.shift_x=boox.minx
-    bbox.shift_y=boox.miny
+    bbox.shift_x=bbox.minx
+    bbox.shift_y=bbox.miny
     return bbox
 
 
