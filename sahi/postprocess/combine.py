@@ -557,6 +557,8 @@ class GreedyNMMPostprocess(PostprocessPredictions):
                     object_prediction_list[keep_ind] = merge_object_prediction_pair(
                         object_prediction_list[keep_ind].tolist(), object_prediction_list[merge_ind].tolist()
                     )
+                else:
+                    selected_object_predictions.append(object_prediction_list[merge_ind].tolist())
             selected_object_predictions.append(object_prediction_list[keep_ind].tolist())
 
         return selected_object_predictions
