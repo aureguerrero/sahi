@@ -158,15 +158,14 @@ def has_match(
 
 
 def get_merged_mask(pred1: ObjectPrediction, pred2: ObjectPrediction) -> Mask:
-    mask1=np.zeros([np.max([pred1.bbox.maxy-pred1.bbox.miny,pred2.bbox.maxy-pred2.bbox.miny]),np.max([pred1.bbox.maxx-pred1.bbox.minx,pred2.bbox.maxx-pred2.bbox.minx])])
-    mask2=mask1.copy()
-    mask1[0:pred1.bbox.maxy-pred1.bbox.miny,0:pred1.bbox.maxx-pred1.bbox.minx] = pred1.mask.bool_mask
-    mask2[0:pred2.bbox.maxy-pred2.bbox.miny,0:pred2.bbox.maxx-pred2.bbox.minx] = pred2.mask.bool_mask
-    union_mask = np.logical_or(mask1, mask2)
+    boxunion=get_merged_bbox(pred1, pred2)
+    union_mask=np.zeros([boxunion.maxy-boxunion.miny+1,boxunion.maxx-boxunion.minx+1],dtype='bool')
+    union_mask[pred1.bbox.miny-boxunion.miny:-boxunion.miny+pred1.bbox.maxy+1,pred1.bbox.minx-boxunion.minx:1-boxunion.minx+pred1.bbox.maxx]=pred1.mask.bool_mask
+    union_mask[pred2.bbox.miny-boxunion.miny:-boxunion.miny+pred2.bbox.maxy+1,pred2.bbox.minx-boxunion.minx:1-boxunion.minx+pred2.bbox.maxx]=pred2.mask.bool_mask
     return Mask(
         bool_mask=union_mask,
         full_shape=pred1.mask.full_shape,
-        shift_amount=pred1.mask.shift_amount,
+        shift_amount=boxunion.shift_amount,
     )
 
 
@@ -182,6 +181,8 @@ def get_merged_bbox(pred1: ObjectPrediction, pred2: ObjectPrediction) -> Boundin
     box1: List[int] = pred1.bbox.to_voc_bbox()
     box2: List[int] = pred2.bbox.to_voc_bbox()
     bbox = BoundingBox(box=calculate_box_union(box1, box2))
+    bbox.shift_x=boox.minx
+    bbox.shift_y=boox.miny
     return bbox
 
 
@@ -207,7 +208,7 @@ def merge_object_prediction_pair(
     else:
         bool_mask = None
         full_shape = None
-    return ObjectPrediction(
+    obj=ObjectPrediction(
         bbox=merged_bbox.to_voc_bbox(),
         score=merged_score,
         category_id=merged_category.id,
@@ -216,3 +217,5 @@ def merge_object_prediction_pair(
         shift_amount=shift_amount,
         full_shape=full_shape,
     )
+    obj.bbox=obj.bbox.get_shifted_box()
+    return obj
