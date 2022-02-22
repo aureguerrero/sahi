@@ -175,7 +175,7 @@ class PredictionResult:
             text_th=None,
             color=None,
             output_dir=export_dir,
-            file_name="export_file,
+            file_name=export_file,
             export_format="png",
         )
 
