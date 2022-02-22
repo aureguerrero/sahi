@@ -165,7 +165,7 @@ class PredictionResult:
         self.object_prediction_list: List[ObjectPrediction] = object_prediction_list
         self.durations_in_seconds = durations_in_seconds
 
-    def export_visuals(self, export_dir: str, text_size: float = None, rect_th: int = None):
+    def export_visuals(self, export_dir: str, export_file: str, text_size: float = None, rect_th: int = None):
         Path(export_dir).mkdir(parents=True, exist_ok=True)
         visualize_object_predictions(
             image=np.ascontiguousarray(self.image),
@@ -175,7 +175,7 @@ class PredictionResult:
             text_th=None,
             color=None,
             output_dir=export_dir,
-            file_name="prediction_visual",
+            file_name="export_file,
             export_format="png",
         )
 
