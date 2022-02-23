@@ -5,6 +5,7 @@ import copy
 import os
 import random
 import time
+import tqdm
 from typing import List, Optional, Union
 
 import cv2
@@ -331,7 +332,7 @@ def visualize_object_predictions(
     # set text_size for category names
     text_size = text_size or rect_th / 3
     # add bbox and mask to image if present
-    for object_prediction in object_prediction_list:
+    for object_prediction in tqdm(object_prediction_list):
         # deepcopy object_prediction_list so that original is not altered
         object_prediction = object_prediction.deepcopy()
 
