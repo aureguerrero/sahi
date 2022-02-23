@@ -197,8 +197,8 @@ def merge_object_prediction_pair(
     pred1: ObjectPrediction,
     pred2: ObjectPrediction,
 ) -> ObjectPrediction:
-    shift_amount = pred1.bbox.shift_amount
     merged_bbox: BoundingBox = get_merged_bbox(pred1, pred2)
+    shift_amount=[merged_bbox.minx,merged_bbox.miny]
     merged_score: float = get_merged_score(pred1, pred2)
     merged_category: Category = get_merged_category(pred1, pred2)
     if pred1.mask and pred2.mask:
