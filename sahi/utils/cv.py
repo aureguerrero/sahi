@@ -332,12 +332,12 @@ def visualize_object_predictions(
     # set text_size for category names
     text_size = text_size or rect_th / 3
     # add bbox and mask to image if present
-    i=0
+    #i=0
     for object_prediction in object_prediction_list:
         # deepcopy object_prediction_list so that original is not altered
         object_prediction = object_prediction.deepcopy()
-        print(i)
-        i=i+1
+        #print(i)
+        #i=i+1
 
         bbox = object_prediction.bbox.to_voc_bbox()
         category_name = object_prediction.category.name
