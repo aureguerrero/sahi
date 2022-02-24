@@ -1,10 +1,10 @@
 <div align="center">
 <h1>
-  SAHI: Slicing Aided Hyper Inference
+  Detectro2 aplicado por ventanas
 </h1>
 
 <h4>
-  A lightweight vision library for performing large scale object detection & instance segmentation
+  Detección de objetos a gran escala y segmentación de instancias: idea visual del proceso interno del algoritmo
 </h4>
 
 <h4>
