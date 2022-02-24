@@ -3,6 +3,7 @@ from typing import List, Union
 
 import numpy as np
 import torch
+import cv2
 
 from sahi.annotation import BoundingBox, Category, Mask
 from sahi.prediction import ObjectPrediction
