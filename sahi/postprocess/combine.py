@@ -6,6 +6,7 @@ from typing import List
 
 import torch
 import cv2
+import numpy as np
 
 from sahi.postprocess.utils import ObjectPredictionList, has_match, merge_object_prediction_pair
 from sahi.prediction import ObjectPrediction
