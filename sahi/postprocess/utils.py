@@ -161,7 +161,8 @@ def get_merged_mask(pred1: ObjectPrediction, pred2: ObjectPrediction) -> Mask:
     boxunion=get_merged_bbox(pred1, pred2)
     union_mask=np.zeros([boxunion.maxy-boxunion.miny+1,boxunion.maxx-boxunion.minx+1],dtype='bool')
     union_mask[pred1.bbox.miny-boxunion.miny:-boxunion.miny+pred1.bbox.maxy+1,pred1.bbox.minx-boxunion.minx:1-boxunion.minx+pred1.bbox.maxx]=pred1.mask.bool_mask
-    union_mask[pred2.bbox.miny-boxunion.miny:-boxunion.miny+pred2.bbox.maxy+1,pred2.bbox.minx-boxunion.minx:1-boxunion.minx+pred2.bbox.maxx]=pred2.mask.bool_mask
+    union_mask[pred2.bbox.miny-boxunion.miny:-boxunion.miny+pred2.bbox.maxy+1,pred2.bbox.minx-boxunion.minx:1-boxunion.minx+pred2.bbox.maxx
+              ]=union_mask[pred2.bbox.miny-boxunion.miny:-boxunion.miny+pred2.bbox.maxy+1,pred2.bbox.minx-boxunion.minx:1-boxunion.minx+pred2.bbox.maxx]+pred2.mask.bool_mask
     return Mask(
         bool_mask=union_mask,
         full_shape=pred1.mask.full_shape,
