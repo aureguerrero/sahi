@@ -566,7 +566,7 @@ class GreedyNMMPostprocess(PostprocessPredictions):
                         areas=np.aaray([cv2.contourArea(cont[i]) for i in range(len(np.shape(cont))+1)])
                         sacar=np.where(areas != np.max(areas))
                         for i in sacar:
-                            img2=cv2.fillConvexPoly(img,cont[i],(0))
+                            img=cv2.fillConvexPoly(img,cont[i],(0))
                         object_prediction_list[merge_ind].tolist().mask.bool_mask=np.array(img,dtype='bool')
                     selected_object_predictions.append(object_prediction_list[merge_ind].tolist())
             selected_object_predictions.append(object_prediction_list[keep_ind].tolist())
