@@ -8,7 +8,7 @@
 </h4>
 
 <h4>
-    <img width="700" alt="teaser" src="https://raw.githubusercontent.com/obss/sahi/main/resources/sliced_inference.gif">
+    <img width="700" alt="teaser" src="https://github.com/aureguerrero/sahi/blob/main/sliced_inference.gif> #https://raw.githubusercontent.com/obss/sahi/main/resources/sliced_inference.gif">
 </h4>
 
 </div>
