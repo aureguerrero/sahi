@@ -229,5 +229,5 @@ def merge_object_prediction_pair(
         shift_amount=shift_amount,
         full_shape=full_shape,
     )
-    obj.bbox=obj.bbox.get_shifted_box()
+    obj.bbox=merged_bbox
     return obj
