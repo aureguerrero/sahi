@@ -559,7 +559,7 @@ class GreedyNMMPostprocess(PostprocessPredictions):
                     object_prediction_list[keep_ind] = merge_object_prediction_pair(
                         object_prediction_list[keep_ind].tolist(), object_prediction_list[merge_ind].tolist()
                     )
-                else:
+#                 else:
 #                     img=np.uint8(255*object_prediction_list[merge_ind].tolist().mask.bool_mask)
 #                     contours, hier = cv2.findContours(img, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
 #                     cont=np.array(contours).squeeze()
@@ -579,7 +579,7 @@ class GreedyNMMPostprocess(PostprocessPredictions):
 #                 for i in sacar[0]:
 #                     img=cv2.fillConvexPoly(img,cont[i],(0))
 #                 object_prediction_list[keep_ind].tolist().mask.bool_mask=np.array(img,dtype='bool')
-            selected_object_predictions.append(object_prediction_list[keep_ind].tolist())
+#             selected_object_predictions.append(object_prediction_list[keep_ind].tolist())
 
         return selected_object_predictions
 
