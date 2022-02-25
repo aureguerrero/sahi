@@ -164,16 +164,16 @@ def get_merged_mask(pred1: ObjectPrediction, pred2: ObjectPrediction) -> Mask:
     union_mask[pred1.bbox.miny-boxunion.miny:-boxunion.miny+pred1.bbox.maxy+1,pred1.bbox.minx-boxunion.minx:1-boxunion.minx+pred1.bbox.maxx]=pred1.mask.bool_mask
     union_mask[pred2.bbox.miny-boxunion.miny:-boxunion.miny+pred2.bbox.maxy+1,pred2.bbox.minx-boxunion.minx:1-boxunion.minx+pred2.bbox.maxx
               ]=union_mask[pred2.bbox.miny-boxunion.miny:-boxunion.miny+pred2.bbox.maxy+1,pred2.bbox.minx-boxunion.minx:1-boxunion.minx+pred2.bbox.maxx]+pred2.mask.bool_mask
-    img=np.uint8(255*union_mask)
-    contours, hier = cv2.findContours(img, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
-    cont=np.array(contours).squeeze()
+#     img=np.uint8(255*union_mask)
+#     contours, hier = cv2.findContours(img, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+#     cont=np.array(contours).squeeze()
     
-    if len(np.shape(cont))==1:
-        areas=np.array([cv2.contourArea(cont[i]) for i in range(len(np.shape(cont))+1)])
-        sacar=np.where(areas != np.max(areas))
-        for i in sacar[0]:
-            img=cv2.fillConvexPoly(img,cont[i],(0))
-        union_mask=np.array(img,dtype='bool')
+#     if len(np.shape(cont))==1:
+#         areas=np.array([cv2.contourArea(cont[i]) for i in range(len(np.shape(cont))+1)])
+#         sacar=np.where(areas != np.max(areas))
+#         for i in sacar[0]:
+#             img=cv2.fillConvexPoly(img,cont[i],(0))
+#         union_mask=np.array(img,dtype='bool')
     return Mask(
         bool_mask=union_mask,
         full_shape=pred1.mask.full_shape,
