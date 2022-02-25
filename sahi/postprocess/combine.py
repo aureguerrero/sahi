@@ -579,7 +579,7 @@ class GreedyNMMPostprocess(PostprocessPredictions):
 #                 for i in sacar[0]:
 #                     img=cv2.fillConvexPoly(img,cont[i],(0))
 #                 object_prediction_list[keep_ind].tolist().mask.bool_mask=np.array(img,dtype='bool')
-             selected_object_predictions.append(object_prediction_list[keep_ind].tolist())
+            selected_object_predictions.append(object_prediction_list[keep_ind].tolist())
 
         return selected_object_predictions
 
