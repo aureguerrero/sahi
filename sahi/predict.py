@@ -305,7 +305,7 @@ def get_sliced_prediction(
         cant_old=(object_prediction_list2)
         cant_new=len(object_prediction_list)
         i=0
-        while cant_old!=cant_new or i<=3:
+        while cant_old!=cant_new or i<=2:
             cant_old=len(object_prediction_list2)
             object_prediction_list2 = postprocess(object_prediction_list)
             cant_new=len(object_prediction_list2)
