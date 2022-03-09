@@ -301,11 +301,20 @@ def get_sliced_prediction(
 
     # merge matching predictions
     if len(object_prediction_list) > 0:
-        object_prediction_list = postprocess(object_prediction_list)
-    print(len(object_prediction_list))
+        object_prediction_list2=[]
+        cant_old=(object_prediction_list2)
+        cant_new=len(object_prediction_list)
+        i=0
+        while cant_old!=cant_new or i==3:
+            object_prediction_list2 = postprocess(object_prediction_list)
+            cant_new=len(object_prediction_list2)
+            cant_old=len(object_prediction_list)
+            i=i+1
+            
+    print(len(object_prediction_list2))
 
     return PredictionResult(
-        image=image, object_prediction_list=object_prediction_list, durations_in_seconds=durations_in_seconds
+        image=image, object_prediction_list=object_prediction_list2, durations_in_seconds=durations_in_seconds
     )
 
 
