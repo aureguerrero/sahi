@@ -177,6 +177,7 @@ class PredictionResult:
         visualize_object_predictions(
             image=np.ascontiguousarray(self.image),
             object_prediction_list=self.object_prediction_list,
+            centroides=self.centroides(),
             rect_th=rect_th,
             text_size=text_size,
             text_th=None,
