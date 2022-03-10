@@ -164,6 +164,13 @@ class PredictionResult:
         self.image_width, self.image_height = self.image.size
         self.object_prediction_list: List[ObjectPrediction] = object_prediction_list
         self.durations_in_seconds = durations_in_seconds
+       
+    def centroides(self):
+        centros=[]
+        for objeto in self.object_prediction_list:
+            c=np.mean(objeto.mask.bool_mask == True, axis=1).astype(int)
+            centros.append([c[1]+objeto..bbox.to_voc_bbox()[0],c[0]+objeto..bbox.to_voc_bbox()[1]])
+        return centros
 
     def export_visuals(self, export_dir: str = "demo_data/", export_file: str = "prediction_visual", text_size: float = None, rect_th: int = None):
         Path(export_dir).mkdir(parents=True, exist_ok=True)
