@@ -418,7 +418,7 @@ def visualize_object_predictions(
                 color=color,
                 thickness=rect_th,
             )
-            cv2.circle(image, c,, 7, (255, 255, 255), -1)
+            cv2.circle(image, c, 7, (255, 255, 255), -1)
             # arange bounding box text location
             label = f"{category_name} {score:.2f}"
             w, h = cv2.getTextSize(label, 0, fontScale=text_size, thickness=text_th)[0]  # label width, height
