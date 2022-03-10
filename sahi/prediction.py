@@ -169,7 +169,7 @@ class PredictionResult:
         centros=[]
         for objeto in self.object_prediction_list:
             c=np.mean(objeto.mask.bool_mask == True, axis=1).astype(int)
-            centros.append((c[1]+objeto..bbox.to_voc_bbox()[0],c[0]+objeto..bbox.to_voc_bbox()[1]))
+            centros.append((c[1]+objeto.bbox.to_voc_bbox()[0],c[0]+objeto.bbox.to_voc_bbox()[1]))
         return centros
 
     def export_visuals(self, export_dir: str = "demo_data/", export_file: str = "prediction_visual", text_size: float = None, rect_th: int = None):
