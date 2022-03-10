@@ -172,12 +172,12 @@ class PredictionResult:
             centros.append((c[1]+objeto.bbox.to_voc_bbox()[0],c[0]+objeto.bbox.to_voc_bbox()[1]))
         return centros
 
-    def export_visuals(self, export_dir: str = "demo_data/", export_file: str = "prediction_visual", text_size: float = None, rect_th: int = None):
+    def export_visuals(self, export_dir: str = "demo_data/", export_file: str = "prediction_visual", text_size: float = None, rect_th: int = None, centro: int = None):
         Path(export_dir).mkdir(parents=True, exist_ok=True)
-        visualize_object_predictions(
+        if centro is None:
+            visualize_object_predictions(
             image=np.ascontiguousarray(self.image),
             object_prediction_list=self.object_prediction_list,
-            centroides=self.centroides(),
             rect_th=rect_th,
             text_size=text_size,
             text_th=None,
@@ -185,7 +185,20 @@ class PredictionResult:
             output_dir=export_dir,
             file_name=export_file,
             export_format="png",
-        )
+            )
+        else:
+            visualize_object_predictions(
+                image=np.ascontiguousarray(self.image),
+                object_prediction_list=self.object_prediction_list,
+                centroides=self.centroides(),
+                rect_th=rect_th,
+                text_size=text_size,
+                text_th=None,
+                color=None,
+                output_dir=export_dir,
+                file_name=export_file,
+                export_format="png",
+            )
 
     def to_coco_annotations(self):
         coco_annotation_list = []
