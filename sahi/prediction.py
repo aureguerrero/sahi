@@ -168,7 +168,7 @@ class PredictionResult:
     def centroides(self):
         centros=[]
         for objeto in self.object_prediction_list:
-            c=np.mean(objeto.mask.bool_mask == True, axis=1).astype(int)
+            c=np.mean(np.where(objeto.mask.bool_mask == True), axis=1).astype(int)
             centros.append((c[1]+objeto.bbox.to_voc_bbox()[0],c[0]+objeto.bbox.to_voc_bbox()[1]))
         return centros
 
