@@ -171,6 +171,14 @@ class PredictionResult:
             c=np.mean(np.where(objeto.mask.bool_mask == True), axis=1).astype(int)
             centros.append((c[1]+objeto.bbox.to_voc_bbox()[0],c[0]+objeto.bbox.to_voc_bbox()[1]))
         return centros
+    
+    def mascaras(self):
+        mask=np.zeros(self.image_height,self.image_width),dtype=np.uint8)
+        for objeto in self.object_prediction_list:
+            mask1 = objeto.mask.bool_mask*1
+            mask[objeto.bbox.to_voc_bbox()[1]:objeto.bbox.to_voc_bbox()[1]+np.shape(mask1)[0],
+                     objeto.bbox.to_voc_bbox()[0]:objeto.bbox.to_voc_bbox()[0]+np.shape(mask1)[1]]=mask1
+        return mask
 
     def export_visuals(self, export_dir: str = "demo_data/", export_file: str = "prediction_visual", text_size: float = None, rect_th: int = None, centro: int = None):
         Path(export_dir).mkdir(parents=True, exist_ok=True)
