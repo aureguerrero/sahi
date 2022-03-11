@@ -173,7 +173,7 @@ class PredictionResult:
         return centros
     
     def mascaras(self):
-        mask=np.zeros(self.image_height,self.image_width),dtype=np.uint8)
+        mask=np.zeros((self.image_height,self.image_width),dtype=np.uint8)
         for objeto in self.object_prediction_list:
             mask1 = objeto.mask.bool_mask*1
             mask[objeto.bbox.to_voc_bbox()[1]:objeto.bbox.to_voc_bbox()[1]+np.shape(mask1)[0],
