@@ -229,7 +229,7 @@ class PredictionResult:
         return lineas_d_surcos
     def info(self,proporcion=0.5):
         rotacion=np.arctan(np.mean(np.array([self.lineas()[i][0] for i in range(self.lineas()[:][0])])))
-        siembra=np.zeros((self.image_height,self.image_width),,np.uint8)
+        siembra=np.zeros((self.image_height,self.image_width),np.uint8)
         for i in self.lineas():
             cv2.line(siembra,(0,int(i(0))),(self.image_width-1,int(i(self.image_width-1))),(255,255,255),2)
         siembra_rotada= rotate(siembra, rotacion*180/np.pi, reshape=False, mode='nearest')
