@@ -13,6 +13,7 @@ from sahi.utils.cv import read_image_as_pil, visualize_object_predictions
 from sahi.utils.file import Path
 
 
+
 class PredictionScore:
     def __init__(self, value: float):
         """
@@ -179,35 +180,84 @@ class PredictionResult:
             mask[objeto.bbox.to_voc_bbox()[1]:objeto.bbox.to_voc_bbox()[1]+np.shape(mask1)[0],
                      objeto.bbox.to_voc_bbox()[0]:objeto.bbox.to_voc_bbox()[0]+np.shape(mask1)[1]]=mask1
         return mask
+    
+    def lineas(self, fft_threshold=0.93):
+        image=self.mascaras()*1
+        centros=np.array(self.centroides())
+        transf = np.fft.fft2(image-np.mean(image))
+        transf_abs = np.abs(transf)
+        transf_max = transf_abs.max()
+        transf_abs[transf_abs<transf_max*fft_threshold]=0
+        ifft = np.fft.ifft2(transf_abs*transf)
+        ifft = (ifft / np.max(ifft))+1
+        img_lines_aux = np.abs(ifft)
+        img_lines_aux_norm=img_lines_aux/img_lines_aux.max()
+        img_lines = np.zeros_like(img_lines_aux_norm)
+        img_lines [ img_lines_aux_norm < 0.2] = 1
+        lineas_entre_siembra = skeletonize(img_lines)
+        extrem_izq=np.percentile(np.where(lineas_entre_siembra==True)[1],5)
+        extrem_derec=np.percentile(np.where(lineas_entre_siembra==True)[1],95)
+        lineas2=np.array([np.where(lineas_entre_siembra[:,int(extrem_izq)]==True),np.where(lineas_entre_siembra[:,int(extrem_derec)]==True)]).squeeze()
+        rectas=np.array([[(lineas2[1,i]-lineas2[0,i])/(extrem_derec-extrem_izq),(lineas2[1,i]-lineas2[0,i])/(extrem_derec-extrem_izq)*extrem_izq+lineas2[0,i]] for i in range(len(lineas2[0]))])
 
-    def export_visuals(self, export_dir: str = "demo_data/", export_file: str = "prediction_visual", text_size: float = None, rect_th: int = None, centro: int = None):
+        lineas_d_surcos=[]
+        if len(np.where((centros[:,1]<rectas[0,0]*centros[:,0]+rectas[0,1])*(centros[:,1]>0)== True)[0])!=0:
+            datos=centros[np.where((centros[:,1]<rectas[0,0]*centros[:,0]+rectas[0,1])*(centros[:,1]>0)== True),:].squeeze()
+            huber = HuberRegressor().fit(np.expand_dims(datos[:,0],axis=1),datos[:,1])
+            lineas_d_surcos.append(np.poly1d([huber.coef_[0],huber.intercept_]))
+  
+        for i in range(len(rectas)-1):
+          if len(np.where((centros[:,1]<rectas[i+1,0]*centros[:,0]+rectas[i+1,1])*(centros[:,1]>rectas[i,0]*centros[:,0]+rectas[i,1])== True)[0])!=0:
+            datos=centros[np.where((centros[:,1]<rectas[i+1,0]*centros[:,0]+rectas[i+1,1])*(centros[:,1]>rectas[i,0]*centros[:,0]+rectas[i,1])== True),:].squeeze()
+            huber = HuberRegressor().fit(np.expand_dims(datos[:,0],axis=1),datos[:,1])
+            lineas_d_surcos.append(np.poly1d([huber.coef_[0],huber.intercept_]))
+    
+        if len(np.where((centros[:,1]>rectas[-1,0]*centros[:,0]+rectas[-1,1])*(centros[:,1]<mascara.shape[0])== True)[0])!=0:
+          datos=centros[np.where((centros[:,1]>rectas[-1,0]*centros[:,0]+rectas[-1,1])*(centros[:,1]<mascara.shape[0])== True),:].squeeze()
+          huber = HuberRegressor().fit(np.expand_dims(datos[:,0],axis=1),datos[:,1])
+          lineas_d_surcos.append(np.poly1d([huber.coef_[0],huber.intercept_]))
+                    
+        return lineas_d_surcos
+    def info(self,proporcion=0.5):
+        rotacion=np.arctan(np.mean(np.array([self.lineas()[i][0] for i in range(self.lineas()[:][0])])))
+        siembra=np.zeros((self.image_height,self.image_width),,np.uint8)
+        for i in range(self.lineas()[:][0]):
+            cv2.line(siembra,(0,int(lineas_d_surcos[i](0))),(self.image_width-1,int(lineas_d_surcos[-i](self.image_width-1))),(255,255,255),2)
+        siembra_rotada= rotate(siembra, rotacion*180/np.pi, reshape=False, mode='nearest')
+        height,width = siembre_rotada.shape
+
+        y_crop_top = int(height*(proporcion/2))
+        y_crop_bottom = -y_crop_top
+        x_crop_left = int(width*(proporcion/2))
+        x_crop_rigth = -x_crop_left
+ 
+        skele_new = skeletonize(img_lines_aux_norm_rotada/255)
+    
+        transecta = skele_new[y_crop_top:y_crop_bottom,int(width*0.5)]
+        entreLineas = np.where(transecta==1)
+
+        y_crop_top_modified = y_crop_top+entreLineas[0][0]
+        y_crop_bottom_modified = y_crop_top+entreLineas[0][-1]
+        
+        Nsurcos   = len(entreLineas[0])
+        pix_surco = ( entreLineas[0][-1] - entreLineas[0][0] ) / Nsurcos
+        
+        return rotacion,pix_surco,pix_surco*np.cos(rotacion)
+           
+    def export_visuals(self, export_dir: str = "demo_data/", export_file: str = "prediction_visual", text_size: float = None, rect_th: int = None, etiqueta: int =None, centro: int = None, lineas: int =None):
         Path(export_dir).mkdir(parents=True, exist_ok=True)
-        if centro is None:
-            visualize_object_predictions(
-            image=np.ascontiguousarray(self.image),
-            object_prediction_list=self.object_prediction_list,
-            rect_th=rect_th,
-            text_size=text_size,
-            text_th=None,
-            color=None,
-            output_dir=export_dir,
-            file_name=export_file,
-            export_format="png",
-            )
-        else:
-            visualize_object_predictions(
-                image=np.ascontiguousarray(self.image),
-                object_prediction_list=self.object_prediction_list,
-                centroides=self.centroides(),
-                rect_th=rect_th,
-                text_size=text_size,
-                text_th=None,
-                color=None,
-                output_dir=export_dir,
-                file_name=export_file,
-                export_format="png",
-            )
-
+        visualize_object_predictions(
+        image=np.ascontiguousarray(self.image),
+        object_prediction_list=self.object_prediction_list,
+        rect_th=rect_th,
+        text_size=text_size,
+        text_th=None,
+        color=None,
+        output_dir=export_dir,
+        file_name=export_file,
+        export_format="png",
+        )
+       
     def to_coco_annotations(self):
         coco_annotation_list = []
         for object_prediction in self.object_prediction_list:
