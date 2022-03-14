@@ -296,7 +296,7 @@ def visualize_prediction(
 def visualize_object_predictions(
     image: np.array,
     object_prediction_list,
-    centroides: list = None,
+    etiqueta: int = None,
     rect_th: int = None,
     text_size: float = None,
     text_th: float = None,
@@ -334,7 +334,7 @@ def visualize_object_predictions(
     text_size = text_size or rect_th / 3
     # add bbox and mask to image if present
     #i=0
-    if centroides is None:
+    if etiqueta is not None:
         for object_prediction in object_prediction_list:
             # deepcopy object_prediction_list so that original is not altered
             object_prediction = object_prediction.deepcopy()
@@ -384,8 +384,8 @@ def visualize_object_predictions(
                 (255, 255, 255),
                 thickness=text_th,
             )
-    else:
-        for object_prediction,c in zip(object_prediction_list,centroides):
+    if etiqueta is not None:
+        for object_prediction in object_prediction_list:
             # deepcopy object_prediction_list so that original is not altered
             object_prediction = object_prediction.deepcopy()
             #print(i)
@@ -408,33 +408,7 @@ def visualize_object_predictions(
                 # draw mask
                 rgb_mask = apply_color_mask(mask, color)
                 image = cv2.addWeighted(image, 1, rgb_mask, 0.4, 0)
-            # set bbox points
-            p1, p2 = (int(bbox[0]), int(bbox[1])), (int(bbox[2]), int(bbox[3]))
-            # visualize boxes
-            cv2.rectangle(
-                image,
-                p1,
-                p2,
-                color=color,
-                thickness=rect_th,
-            )
-            cv2.circle(image, c, 7, (255, 255, 255), -1)
-            # arange bounding box text location
-            label = f"{category_name} {score:.2f}"
-            w, h = cv2.getTextSize(label, 0, fontScale=text_size, thickness=text_th)[0]  # label width, height
-            outside = p1[1] - h - 3 >= 0  # label fits outside box
-            p2 = p1[0] + w, p1[1] - h - 3 if outside else p1[1] + h + 3
-            # add bounding box text
-            cv2.rectangle(image, p1, p2, color, -1, cv2.LINE_AA)  # filled
-            cv2.putText(
-                image,
-                label,
-                (p1[0], p1[1] - 2 if outside else p1[1] + h + 2),
-                0,
-                text_size,
-                (255, 255, 255),
-                thickness=text_th,
-            )
+            
     if output_dir:
         # create output folder if not present
         Path(output_dir).mkdir(parents=True, exist_ok=True)
