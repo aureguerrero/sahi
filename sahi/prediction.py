@@ -221,8 +221,8 @@ class PredictionResult:
     def info(self,proporcion=0.5):
         rotacion=np.arctan(np.mean(np.array([self.lineas()[i][0] for i in range(self.lineas()[:][0])])))
         siembra=np.zeros((self.image_height,self.image_width),,np.uint8)
-        for i in range(self.lineas()[:][0]):
-            cv2.line(siembra,(0,int(lineas_d_surcos[i](0))),(self.image_width-1,int(lineas_d_surcos[-i](self.image_width-1))),(255,255,255),2)
+        for i in self.lineas():
+            cv2.line(siembra,(0,int(i(0))),(self.image_width-1,int(i(self.image_width-1))),(255,255,255),2)
         siembra_rotada= rotate(siembra, rotacion*180/np.pi, reshape=False, mode='nearest')
         height,width = siembre_rotada.shape
 
@@ -246,8 +246,17 @@ class PredictionResult:
            
     def export_visuals(self, export_dir: str = "demo_data/", export_file: str = "prediction_visual", text_size: float = None, rect_th: int = None, etiqueta: int =None, centro: int = None, lineas: int =None):
         Path(export_dir).mkdir(parents=True, exist_ok=True)
+        if centro is not None:
+            centro=self.centroides()
+            for i in centro:
+                cv2.circle(self.image, i, 7, (255, 255, 255), -1)
+        if lineas is not None:
+           lineas=self.lineas()
+            for i in lineas:
+                cv2.line(siembra,(0,int(i(0))),(self.image_width-1,int(i(self.image_width-1))),(255,255,255),7)
         visualize_object_predictions(
         image=np.ascontiguousarray(self.image),
+        etiqueta=etiqueta,
         object_prediction_list=self.object_prediction_list,
         rect_th=rect_th,
         text_size=text_size,
@@ -257,6 +266,7 @@ class PredictionResult:
         file_name=export_file,
         export_format="png",
         )
+        
        
     def to_coco_annotations(self):
         coco_annotation_list = []
