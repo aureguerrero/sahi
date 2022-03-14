@@ -261,7 +261,7 @@ class PredictionResult:
                 cv2.circle(self.image, i, 7, (255, 255, 255), -1)
         if lineas is not None:
            lineas=self.lineas()
-            for i in lineas:
+           for i in lineas:
                 cv2.line(siembra,(0,int(i(0))),(self.image_width-1,int(i(self.image_width-1))),(255,255,255),7)
         visualize_object_predictions(
         image=np.ascontiguousarray(self.image),
