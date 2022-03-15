@@ -272,7 +272,7 @@ class PredictionResult:
         b = np.zeros_like(mascara).astype(np.uint8)
         colors = Colors()
         color = colors(self.object_prediction_list[0].category.id)
-        (r[image > 0], g[image > 0], b[image >0]) = color
+        (r[mascara > 0], g[mascara > 0], b[mascara >0]) = color
         
         rgb_mask = np.stack([r, g, b], axis=2)
         image = cv2.addWeighted(image, 1, rgb_mask, 0.4, 0)
