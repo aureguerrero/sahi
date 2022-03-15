@@ -242,7 +242,7 @@ class PredictionResult:
         x_crop_left = int(width*(proporcion/2))
         x_crop_rigth = -x_crop_left
  
-        skele_new = skeletonize(img_lines_aux_norm_rotada/255)
+        skele_new = skeletonize(siembra_rotada/255)
     
         transecta = skele_new[y_crop_top:y_crop_bottom,int(width*0.5)]
         entreLineas = np.where(transecta==1)
