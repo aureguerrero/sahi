@@ -182,10 +182,16 @@ class PredictionResult:
             centros.append((c[1]+objeto.bbox.to_voc_bbox()[0],c[0]+objeto.bbox.to_voc_bbox()[1]))
         return centros
     
+    def clases(self):
+        clases=[]
+        for objeto in self.object_prediction_list:
+            clases.append(objeto.category.id)
+        return centros
+    
     def mascaras(self):
         mask=np.zeros((self.image_height,self.image_width),dtype=np.uint8)
         for objeto in self.object_prediction_list:
-            mask1 = objeto.mask.bool_mask*1
+            mask1 = objeto.mask.bool_mask*(objeto.category.id+1)
             mask[objeto.bbox.to_voc_bbox()[1]:objeto.bbox.to_voc_bbox()[1]+np.shape(mask1)[0],
                      objeto.bbox.to_voc_bbox()[0]:objeto.bbox.to_voc_bbox()[0]+np.shape(mask1)[1]]=mask1
         return mask
@@ -255,29 +261,92 @@ class PredictionResult:
         
         return {'rotacion': rotacion*180/np.pi,'resolucion_rotacion' : pix_surco,'resolucion_orig': pix_surco*np.cos(rotacion)}
            
-    def export_visuals(self, export_dir: str = "demo_data/", export_file: str = "prediction_visual", text_size: float = None, rect_th: int = None, etiqueta: int =None, centro: int = None, lineas: int =None):
+    def export_visuals(self, export_dir: str = "demo_data/", export_file: str = "prediction_visual", text_size: float = None, rect_th: int = None, 
+                       etiqueta: int =None, centro: int = None, lineas: int =None, export_format: str = "png"):
+        
         Path(export_dir).mkdir(parents=True, exist_ok=True)
         image=np.array(self.image)
+        mascara=self.mascaras()
+        r = np.zeros_like(mascara).astype(np.uint8)
+        g = np.zeros_like(mascara).astype(np.uint8)
+        b = np.zeros_like(mascara).astype(np.uint8)
+        colors = Colors()
+        color = colors(object_prediction.category.id)
+        (r[image > 0], g[image > 0], b[image >0]) = color
+        
+        rgb_mask = np.stack([r, g, b], axis=2)
+        image = cv2.addWeighted(image, 1, rgb_mask, 0.4, 0)
+        
         if centro is not None:
             centro=self.centroides()
-            for i in centro:
-                cv2.circle(image, i, 7, (255, 255, 255), -1)
+            ptos=np.zeros_like(image,dtype=np.uint8)
+            centro=np.array(centro)
+            ptos[centro[:,1],centro[:,0],:]=255
+            kernel = np.ones((7,7),np.uint8)
+            image = cv2.addWeighted(image, 1, cv2.dilate(a,kernel,iterations = 1), 0.8, 0)
+#             for i in centro:
+#                 cv2.circle(image, i, 7, (255, 255, 255), -1)
         if lineas is not None:
            lineas=self.lineas()
            for i in lineas:
                 cv2.line(image,(0,int(i(0))),(self.image_width-1,int(i(self.image_width-1))),(255,255,255),7)
-        visualize_object_predictions(
-        image=np.ascontiguousarray(image),
-        etiqueta=etiqueta,
-        object_prediction_list=self.object_prediction_list,
-        rect_th=rect_th,
-        text_size=text_size,
-        text_th=None,
-        color=None,
-        output_dir=export_dir,
-        file_name=export_file,
-        export_format="png",
-        )
+                
+        if etiqueta is not None:
+            rect_th = rect_th or max(round(sum(image.shape) / 2 * 0.001), 1)
+            # set text_th for category names
+            text_th = text_th or max(rect_th - 1, 1)
+            # set text_size for category names
+            text_size = text_size or rect_th / 3
+            # add bbox and mask to image if present
+            for object_prediction in self.object_prediction_list:
+                bbox = object_prediction.bbox.to_voc_bbox()
+                category_name = object_prediction.category.name
+                score = object_prediction.score.value
+                # set bbox points
+                p1, p2 = (int(bbox[0]), int(bbox[1])), (int(bbox[2]), int(bbox[3]))
+                # visualize boxes
+                cv2.rectangle(
+                    image,
+                    p1,
+                    p2,
+                    color=color,
+                    thickness=rect_th,
+                )
+                # arange bounding box text location
+                label = f"{category_name} {score:.2f}"
+                w, h = cv2.getTextSize(label, 0, fontScale=text_size, thickness=text_th)[0]  # label width, height
+                outside = p1[1] - h - 3 >= 0  # label fits outside box
+                p2 = p1[0] + w, p1[1] - h - 3 if outside else p1[1] + h + 3
+                # add bounding box text
+                cv2.rectangle(image, p1, p2, color, -1, cv2.LINE_AA)  # filled
+                cv2.putText(
+                    image,
+                    label,
+                    (p1[0], p1[1] - 2 if outside else p1[1] + h + 2),
+                    0,
+                    text_size,
+                    (255, 255, 255),
+                    thickness=text_th,
+                )
+            
+            if export_dir:
+                # save inference result
+                save_path = os.path.join(export_dir, export_file + "." + export_format)
+                cv2.imwrite(save_path, cv2.cvtColor(image, cv2.COLOR_RGB2BGR))
+
+            
+#         visualize_object_predictions(
+#         image=np.ascontiguousarray(image),
+#         etiqueta=etiqueta,
+#         object_prediction_list=self.object_prediction_list,
+#         rect_th=rect_th,
+#         text_size=text_size,
+#         text_th=None,
+#         color=None,
+#         output_dir=export_dir,
+#         file_name=export_file,
+#         export_format="png",
+#         )
         
        
     def to_coco_annotations(self):
@@ -310,3 +379,59 @@ class PredictionResult:
                 object_prediction.to_fiftyone_detection(image_height=self.image_height, image_width=self.image_width)
             )
         return fiftyone_detection_list
+
+   
+class Colors:
+    # color palette
+    def __init__(self):
+        hex = (
+            "FF3838",
+            "2C99A8",
+            "FF701F",
+            "6473FF",
+            "CFD231",
+            "48F90A",
+            "92CC17",
+            "3DDB86",
+            "1A9334",
+            "00D4BB",
+            "FF9D97",
+            "00C2FF",
+            "344593",
+            "FFB21D",
+            "0018EC",
+            "8438FF",
+            "520085",
+            "CB38FF",
+            "FF95C8",
+            "FF37C7",
+        )
+        self.palette = [self.hex2rgb("#" + c) for c in hex]
+        self.n = len(self.palette)
+
+    def __call__(self, i, bgr=False):
+        c = self.palette[int(i) % self.n]
+        return (c[2], c[1], c[0]) if bgr else c
+
+    @staticmethod
+    def hex2rgb(h):  # rgb order
+        return tuple(int(h[1 + i : 1 + i + 2], 16) for i in (0, 2, 4))
+
+def select_random_color():
+    """
+    Selects random color.
+    """
+    colors = [
+        [0, 255, 0],
+        [0, 0, 255],
+        [255, 0, 0],
+        [0, 255, 255],
+        [255, 255, 0],
+        [255, 0, 255],
+        [80, 70, 180],
+        [250, 80, 190],
+        [245, 145, 50],
+        [70, 150, 250],
+        [50, 190, 190],
+    ]
+    return colors[random.randrange(0, 10)]
