@@ -261,7 +261,7 @@ class PredictionResult:
         
         return {'rotacion': rotacion*180/np.pi,'resolucion_rotacion' : pix_surco,'resolucion_orig': pix_surco*np.cos(rotacion)}
            
-    def export_visuals(self, export_dir: str = "demo_data/", export_file: str = "prediction_visual", text_size: float = None, rect_th: int = None, 
+    def export_visuals(self, export_dir: str = "demo_data/", export_file: str = "prediction_visual", text_size: float = None, text_th: float = None, rect_th: int = None, 
                        etiqueta: int =None, centro: int = None, lineas: int =None, export_format: str = "png"):
         
         Path(export_dir).mkdir(parents=True, exist_ok=True)
