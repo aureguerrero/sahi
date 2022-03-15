@@ -221,8 +221,8 @@ class PredictionResult:
             huber = HuberRegressor().fit(np.expand_dims(datos[:,0],axis=1),datos[:,1])
             lineas_d_surcos.append(np.poly1d([huber.coef_[0],huber.intercept_]))
     
-        if len(np.where((centros[:,1]>rectas[-1,0]*centros[:,0]+rectas[-1,1])*(centros[:,1]<mascara.shape[0])== True)[0])!=0:
-          datos=centros[np.where((centros[:,1]>rectas[-1,0]*centros[:,0]+rectas[-1,1])*(centros[:,1]<mascara.shape[0])== True),:].squeeze()
+        if len(np.where((centros[:,1]>rectas[-1,0]*centros[:,0]+rectas[-1,1])*(centros[:,1]<self.mascara().shape[0])== True)[0])!=0:
+          datos=centros[np.where((centros[:,1]>rectas[-1,0]*centros[:,0]+rectas[-1,1])*(centros[:,1]<self.mascaras().shape[0])== True),:].squeeze()
           huber = HuberRegressor().fit(np.expand_dims(datos[:,0],axis=1),datos[:,1])
           lineas_d_surcos.append(np.poly1d([huber.coef_[0],huber.intercept_]))
                     
@@ -255,16 +255,17 @@ class PredictionResult:
            
     def export_visuals(self, export_dir: str = "demo_data/", export_file: str = "prediction_visual", text_size: float = None, rect_th: int = None, etiqueta: int =None, centro: int = None, lineas: int =None):
         Path(export_dir).mkdir(parents=True, exist_ok=True)
+        image=np.array(self.image)
         if centro is not None:
             centro=self.centroides()
             for i in centro:
-                cv2.circle(self.image, i, 7, (255, 255, 255), -1)
+                cv2.circle(image, i, 7, (255, 255, 255), -1)
         if lineas is not None:
            lineas=self.lineas()
            for i in lineas:
-                cv2.line(siembra,(0,int(i(0))),(self.image_width-1,int(i(self.image_width-1))),(255,255,255),7)
+                cv2.line(image,(0,int(i(0))),(self.image_width-1,int(i(self.image_width-1))),(255,255,255),7)
         visualize_object_predictions(
-        image=np.ascontiguousarray(self.image),
+        image=np.ascontiguousarray(image),
         etiqueta=etiqueta,
         object_prediction_list=self.object_prediction_list,
         rect_th=rect_th,
