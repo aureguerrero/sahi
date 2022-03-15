@@ -271,7 +271,7 @@ class PredictionResult:
         g = np.zeros_like(mascara).astype(np.uint8)
         b = np.zeros_like(mascara).astype(np.uint8)
         colors = Colors()
-        color = colors(object_prediction.category.id)
+        color = colors(self.object_prediction_list[0].category.id)
         (r[image > 0], g[image > 0], b[image >0]) = color
         
         rgb_mask = np.stack([r, g, b], axis=2)
