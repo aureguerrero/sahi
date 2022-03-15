@@ -196,6 +196,7 @@ class PredictionResult:
         transf = np.fft.fft2(image-np.mean(image))
         transf_abs = np.abs(transf)
         transf_max = transf_abs.max()
+        mascara=self.mascaras()
         transf_abs[transf_abs<transf_max*fft_threshold]=0
         ifft = np.fft.ifft2(transf_abs*transf)
         ifft = (ifft / np.max(ifft))+1
@@ -221,17 +222,18 @@ class PredictionResult:
             huber = HuberRegressor().fit(np.expand_dims(datos[:,0],axis=1),datos[:,1])
             lineas_d_surcos.append(np.poly1d([huber.coef_[0],huber.intercept_]))
     
-        if len(np.where((centros[:,1]>rectas[-1,0]*centros[:,0]+rectas[-1,1])*(centros[:,1]<self.mascaras().shape[0])== True)[0])!=0:
-          datos=centros[np.where((centros[:,1]>rectas[-1,0]*centros[:,0]+rectas[-1,1])*(centros[:,1]<self.mascaras().shape[0])== True),:].squeeze()
+        if len(np.where((centros[:,1]>rectas[-1,0]*centros[:,0]+rectas[-1,1])*(centros[:,1]<mascara.shape[0])== True)[0])!=0:
+          datos=centros[np.where((centros[:,1]>rectas[-1,0]*centros[:,0]+rectas[-1,1])*(centros[:,1]<mascara.shape[0])== True),:].squeeze()
           huber = HuberRegressor().fit(np.expand_dims(datos[:,0],axis=1),datos[:,1])
           lineas_d_surcos.append(np.poly1d([huber.coef_[0],huber.intercept_]))
                     
         return lineas_d_surcos
     def info(self,proporcion=0.5):
-        rotacion=np.arctan(np.mean(np.array([self.lineas()[i][0] for i in range(self.lineas()[:][0])])))
+        lineas=self.lineas()
+        rotacion=np.arctan(np.mean(np.array([lineas[i][0] for i in range(len(lineas))])))
         siembra=np.zeros((self.image_height,self.image_width),np.uint8)
-        for i in self.lineas():
-            cv2.line(siembra,(0,int(i(0))),(self.image_width-1,int(i(self.image_width-1))),(255,255,255),2)
+        for i in range(len(lineas)):
+            cv2.line(siembra,(0,int(lineas[i](0))),(self.image_width-1,int(lineas[i](self.image_width-1))),(255,255,255),2)
         siembra_rotada= rotate(siembra, rotacion*180/np.pi, reshape=False, mode='nearest')
         height,width = siembre_rotada.shape
 
@@ -265,7 +267,7 @@ class PredictionResult:
            for i in lineas:
                 cv2.line(image,(0,int(i(0))),(self.image_width-1,int(i(self.image_width-1))),(255,255,255),7)
         visualize_object_predictions(
-        image=np.ascontiguousarray(image),
+        image=np.ascontiguousarray(self.image),
         etiqueta=etiqueta,
         object_prediction_list=self.object_prediction_list,
         rect_th=rect_th,
