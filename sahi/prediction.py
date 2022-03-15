@@ -251,7 +251,7 @@ class PredictionResult:
         Nsurcos   = len(entreLineas[0])
         pix_surco = ( entreLineas[0][-1] - entreLineas[0][0] ) / Nsurcos
         
-        return {'rotacion': rotacion,'resolucion_rotacion' : pix_surco,'resolucion_orig': pix_surco*np.cos(rotacion)}
+        return {'rotacion': rotacion*180/np.pi,'resolucion_rotacion' : pix_surco,'resolucion_orig': pix_surco*np.cos(rotacion)}
            
     def export_visuals(self, export_dir: str = "demo_data/", export_file: str = "prediction_visual", text_size: float = None, rect_th: int = None, etiqueta: int =None, centro: int = None, lineas: int =None):
         Path(export_dir).mkdir(parents=True, exist_ok=True)
