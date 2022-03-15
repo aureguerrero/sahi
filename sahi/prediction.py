@@ -257,7 +257,7 @@ class PredictionResult:
         y_crop_bottom_modified = y_crop_top+entreLineas[0][-1]
         
         Nsurcos   = len(entreLineas[0])
-        pix_surco = ( entreLineas[0][-1] - entreLineas[0][0] ) / Nsurcos
+        pix_surco = ( entreLineas[0][-1] - entreLineas[0][0] ) / (Nsurcos-1)
         
         return {'rotacion': rotacion*180/np.pi,'resolucion_rotacion' : pix_surco,'resolucion_orig': pix_surco*np.cos(rotacion)}
            
@@ -289,7 +289,7 @@ class PredictionResult:
         if lineas is not None or lineas !=0:
            lineas=self.lineas()
            for i in lineas:
-                cv2.line(image,(0,int(i(0))),(self.image_width-1,int(i(self.image_width-1))),(255,255,255),7)
+                cv2.line(image,(0,int(i(0))),(self.image_width-1,int(i(self.image_width-1))),(255,255,255),5)
                 
         if etiqueta is not None or etiqueta !=0:
             rect_th = rect_th or max(round(sum(image.shape) / 2 * 0.001), 1)
