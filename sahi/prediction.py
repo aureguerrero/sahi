@@ -221,7 +221,7 @@ class PredictionResult:
             huber = HuberRegressor().fit(np.expand_dims(datos[:,0],axis=1),datos[:,1])
             lineas_d_surcos.append(np.poly1d([huber.coef_[0],huber.intercept_]))
     
-        if len(np.where((centros[:,1]>rectas[-1,0]*centros[:,0]+rectas[-1,1])*(centros[:,1]<self.mascara().shape[0])== True)[0])!=0:
+        if len(np.where((centros[:,1]>rectas[-1,0]*centros[:,0]+rectas[-1,1])*(centros[:,1]<self.mascaras().shape[0])== True)[0])!=0:
           datos=centros[np.where((centros[:,1]>rectas[-1,0]*centros[:,0]+rectas[-1,1])*(centros[:,1]<self.mascaras().shape[0])== True),:].squeeze()
           huber = HuberRegressor().fit(np.expand_dims(datos[:,0],axis=1),datos[:,1])
           lineas_d_surcos.append(np.poly1d([huber.coef_[0],huber.intercept_]))
@@ -251,7 +251,7 @@ class PredictionResult:
         Nsurcos   = len(entreLineas[0])
         pix_surco = ( entreLineas[0][-1] - entreLineas[0][0] ) / Nsurcos
         
-        return rotacion,pix_surco,pix_surco*np.cos(rotacion)
+        return {'rotacion': rotacion,'resolucion_rotacion' : pix_surco,'resolucion_orig': pix_surco*np.cos(rotacion)}
            
     def export_visuals(self, export_dir: str = "demo_data/", export_file: str = "prediction_visual", text_size: float = None, rect_th: int = None, etiqueta: int =None, centro: int = None, lineas: int =None):
         Path(export_dir).mkdir(parents=True, exist_ok=True)
