@@ -277,7 +277,7 @@ class PredictionResult:
         rgb_mask = np.stack([r, g, b], axis=2)
         image = cv2.addWeighted(image, 1, rgb_mask, 0.4, 0)
         
-        if centro is not None:
+        if centro is not None or centro !=0:
             centro=self.centroides()
             ptos=np.zeros_like(image,dtype=np.uint8)
             centro=np.array(centro)
@@ -286,12 +286,12 @@ class PredictionResult:
             image = cv2.addWeighted(image, 1, cv2.dilate(a,kernel,iterations = 1), 0.8, 0)
 #             for i in centro:
 #                 cv2.circle(image, i, 7, (255, 255, 255), -1)
-        if lineas is not None:
+        if lineas is not None or lineas !=0:
            lineas=self.lineas()
            for i in lineas:
                 cv2.line(image,(0,int(i(0))),(self.image_width-1,int(i(self.image_width-1))),(255,255,255),7)
                 
-        if etiqueta is not None:
+        if etiqueta is not None or etiqueta !=0:
             rect_th = rect_th or max(round(sum(image.shape) / 2 * 0.001), 1)
             # set text_th for category names
             text_th = text_th or max(rect_th - 1, 1)
