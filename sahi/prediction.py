@@ -235,7 +235,7 @@ class PredictionResult:
         for i in range(len(lineas)):
             cv2.line(siembra,(0,int(lineas[i](0))),(self.image_width-1,int(lineas[i](self.image_width-1))),(255,255,255),2)
         siembra_rotada= rotate(siembra, rotacion*180/np.pi, reshape=False, mode='nearest')
-        height,width = siembre_rotada.shape
+        height,width = siembra_rotada.shape
 
         y_crop_top = int(height*(proporcion/2))
         y_crop_bottom = -y_crop_top
@@ -267,7 +267,7 @@ class PredictionResult:
            for i in lineas:
                 cv2.line(image,(0,int(i(0))),(self.image_width-1,int(i(self.image_width-1))),(255,255,255),7)
         visualize_object_predictions(
-        image=np.ascontiguousarray(self.image),
+        image=np.ascontiguousarray(image),
         etiqueta=etiqueta,
         object_prediction_list=self.object_prediction_list,
         rect_th=rect_th,
