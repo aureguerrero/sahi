@@ -384,7 +384,7 @@ def visualize_object_predictions(
                 (255, 255, 255),
                 thickness=text_th,
             )
-    if etiqueta is not None:
+    else:
         for object_prediction in object_prediction_list:
             # deepcopy object_prediction_list so that original is not altered
             object_prediction = object_prediction.deepcopy()
