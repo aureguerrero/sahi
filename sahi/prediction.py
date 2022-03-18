@@ -214,22 +214,21 @@ class PredictionResult:
         extrem_izq=np.percentile(np.where(lineas_entre_siembra==True)[1],5)
         extrem_derec=np.percentile(np.where(lineas_entre_siembra==True)[1],95)
         lineas2=np.array([np.where(lineas_entre_siembra[:,int(extrem_izq)]==True),np.where(lineas_entre_siembra[:,int(extrem_derec)]==True)]).squeeze()
-        rectas=np.array([[(lineas2[1,i]-lineas2[0,i])/(extrem_derec-extrem_izq),(lineas2[1,i]-lineas2[0,i])/(extrem_derec-extrem_izq)*extrem_izq+lineas2[0,i]] for i in range(len(lineas2[0]))])
-
+        rectas=[np.poly1d([(lineas2[1,i]-lineas2[0,i])/(extrem_derec-extrem_izq),-(lineas2[1,i]-lineas2[0,i])/(extrem_derec-extrem_izq)*extrem_izq+lineas2[0,i]]) for i in range(len(lineas2[0]))]
         lineas_d_surcos=[]
-        if len(np.where((centros[:,1]<rectas[0,0]*centros[:,0]+rectas[0,1])*(centros[:,1]>0)== True)[0])!=0:
-            datos=centros[np.where((centros[:,1]<rectas[0,0]*centros[:,0]+rectas[0,1])*(centros[:,1]>0)== True),:].squeeze()
+        if len(np.where((centros[:,1]<rectas[0](centros[:,0]))*(centros[:,1]>0)== True)[0])>1:
+            datos=centros[np.where((centros[:,1]<rectas[0](centros[:,0]))*(centros[:,1]>0)== True),:].squeeze()
             huber = HuberRegressor().fit(np.expand_dims(datos[:,0],axis=1),datos[:,1])
             lineas_d_surcos.append(np.poly1d([huber.coef_[0],huber.intercept_]))
   
         for i in range(len(rectas)-1):
-          if len(np.where((centros[:,1]<rectas[i+1,0]*centros[:,0]+rectas[i+1,1])*(centros[:,1]>rectas[i,0]*centros[:,0]+rectas[i,1])== True)[0])!=0:
-            datos=centros[np.where((centros[:,1]<rectas[i+1,0]*centros[:,0]+rectas[i+1,1])*(centros[:,1]>rectas[i,0]*centros[:,0]+rectas[i,1])== True),:].squeeze()
+          if len(np.where((centros[:,1]<rectas[i+1](centros[:,0]))*(centros[:,1]>rectas[i](centros[:,0]))== True)[0])>1:
+            datos=centros[np.where((centros[:,1]<rectas[i+1](centros[:,0]))*(centros[:,1]>rectas[i](centros[:,0]))== True),:].squeeze()
             huber = HuberRegressor().fit(np.expand_dims(datos[:,0],axis=1),datos[:,1])
             lineas_d_surcos.append(np.poly1d([huber.coef_[0],huber.intercept_]))
     
-        if len(np.where((centros[:,1]>rectas[-1,0]*centros[:,0]+rectas[-1,1])*(centros[:,1]<mascara.shape[0])== True)[0])!=0:
-          datos=centros[np.where((centros[:,1]>rectas[-1,0]*centros[:,0]+rectas[-1,1])*(centros[:,1]<mascara.shape[0])== True),:].squeeze()
+        if len(np.where((centros[:,1]>rectas[-1](centros[:,0]))*(centros[:,1]<mascara.shape[0])== True)[0])>1:
+          datos=centros[np.where((centros[:,1]>rectas[-1](centros[:,0]))*(centros[:,1]<mascara.shape[0])== True),:].squeeze()
           huber = HuberRegressor().fit(np.expand_dims(datos[:,0],axis=1),datos[:,1])
           lineas_d_surcos.append(np.poly1d([huber.coef_[0],huber.intercept_]))
                     
