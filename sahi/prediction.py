@@ -196,7 +196,7 @@ class PredictionResult:
                      objeto.bbox.to_voc_bbox()[0]:objeto.bbox.to_voc_bbox()[0]+np.shape(mask1)[1]]=mask1
         return mask
     
-    def lineas(self, fft_threshold=0.93):
+    def lineas(self, fft_threshold=0.93, epsilon_h=1.96):
         image=self.mascaras()*1
         centros=np.array(self.centroides())
         transf = np.fft.fft2(image-np.mean(image))
@@ -219,7 +219,7 @@ class PredictionResult:
         if len(np.where((centros[:,1]<rectas[0](centros[:,0]))*(centros[:,1]>0)== True)[0])>1:
             ubica=np.where((centros[:,1]<rectas[0](centros[:,0]))*(centros[:,1]>0)== True)[0]
             datos=centros[np.where((centros[:,1]<rectas[0](centros[:,0]))*(centros[:,1]>0)== True),:].squeeze()
-            huber = HuberRegressor(epsilon=1.96).fit(np.expand_dims(datos[:,0],axis=1),datos[:,1])
+            huber = HuberRegressor(epsilon=epsilon_h).fit(np.expand_dims(datos[:,0],axis=1),datos[:,1])
             ubica2=np.where(huber.outliers_==True)[0]
             for u in range(len(ubica2)):
                 np.delete(centros,ubica[u],axis=0)
@@ -231,7 +231,7 @@ class PredictionResult:
           if len(np.where((centros[:,1]<rectas[i+1](centros[:,0]))*(centros[:,1]>rectas[i](centros[:,0]))== True)[0])>1:
             ubica=np.where((centros[:,1]<rectas[i+1](centros[:,0]))*(centros[:,1]>rectas[i](centros[:,0]))== True)[0]
             datos=centros[np.where((centros[:,1]<rectas[i+1](centros[:,0]))*(centros[:,1]>rectas[i](centros[:,0]))== True),:].squeeze()
-            huber = HuberRegressor(epsilon=1.96).fit(np.expand_dims(datos[:,0],axis=1),datos[:,1])
+            huber = HuberRegressor(epsilon=epsilon_h).fit(np.expand_dims(datos[:,0],axis=1),datos[:,1])
             ubica2=np.where(huber.outliers_==True)[0]
             for u in range(len(ubica2)):
                 np.delete(centros,ubica[u],axis=0)
@@ -241,7 +241,7 @@ class PredictionResult:
         if len(np.where((centros[:,1]>rectas[-1](centros[:,0]))*(centros[:,1]<mascara.shape[0])== True)[0])>1:
           ubica=np.where((centros[:,1]>rectas[-1](centros[:,0]))*(centros[:,1]<mascara.shape[0])== True)[0]
           datos=centros[np.where((centros[:,1]>rectas[-1](centros[:,0]))*(centros[:,1]<mascara.shape[0])== True),:].squeeze()
-          huber = HuberRegressor(epsilon=1.96).fit(np.expand_dims(datos[:,0],axis=1),datos[:,1])
+          huber = HuberRegressor(epsilon=epsilon_h).fit(np.expand_dims(datos[:,0],axis=1),datos[:,1])
           ubica2=np.where(huber.outliers_==True)[0]
           for u in range(len(ubica2)):
               np.delete(centros,ubica[u],axis=0)
