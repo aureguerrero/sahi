@@ -256,7 +256,7 @@ class PredictionResult:
             datos=centros[np.where((centros[:,1]<rectas[0](centros[:,0]))*(centros[:,1]>0)== True),:].squeeze()
             orden=np.sort(datos[:,0])
 
-            info_d_surcos.append([id_surco,[ubica[orden]]])
+            info_d_surcos.append([id_surco,ubica[[np.where(datos[:,0]==np.sort(datos[:,0])[i])[0][0] for i in range(len(datos[:,0]))]]])
             id_surco=id_surco+1
                                   
   
@@ -266,7 +266,7 @@ class PredictionResult:
             datos=centros[np.where((centros[:,1]<rectas[i+1](centros[:,0]))*(centros[:,1]>rectas[i](centros[:,0]))== True),:].squeeze()
             orden=np.sort(datos[:,0])
 
-            info_d_surcos.append([id_surco,[ubica[orden]]])
+            info_d_surcos.append([id_surco,ubica[[np.where(datos[:,0]==np.sort(datos[:,0])[i])[0][0] for i in range(len(datos[:,0]))]]])
             id_surco=id_surco+1
     
         if len(np.where((centros[:,1]>rectas[-1](centros[:,0]))*(centros[:,1]<mascara.shape[0])== True)[0])>1:
@@ -274,7 +274,7 @@ class PredictionResult:
           datos=centros[np.where((centros[:,1]>rectas[-1](centros[:,0]))*(centros[:,1]<mascara.shape[0])== True),:].squeeze()
           orden=np.sort(datos[:,0])
 
-          info_d_surcos.append([id_surco,[ubica[orden]]])
+          info_d_surcos.append([id_surco,ubica[[np.where(datos[:,0]==np.sort(datos[:,0])[i])[0][0] for i in range(len(datos[:,0]))]]])
           id_surco=id_surco+1
                     
         return lineas_d_surcos,info_d_surcos
