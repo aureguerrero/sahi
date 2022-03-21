@@ -220,7 +220,7 @@ class PredictionResult:
             ubica=np.where((centros[:,1]<rectas[0](centros[:,0]))*(centros[:,1]>0)== True)[0]
             datos=centros[np.where((centros[:,1]<rectas[0](centros[:,0]))*(centros[:,1]>0)== True),:].squeeze()
             huber = HuberRegressor(epsilon=1.96).fit(np.expand_dims(datos[:,0],axis=1),datos[:,1])
-            ubicca2=np.where(huber.outliers_==True)[0]
+            ubica2=np.where(huber.outliers_==True)[0]
             for u in range(len(ubica2)):
                 np.delete(centros,ubica[u],axis=0)
                 self.object_prediction_list.pop(ubica[u])
@@ -232,7 +232,7 @@ class PredictionResult:
             ubica=np.where((centros[:,1]<rectas[i+1](centros[:,0]))*(centros[:,1]>rectas[i](centros[:,0]))== True)[0]
             datos=centros[np.where((centros[:,1]<rectas[i+1](centros[:,0]))*(centros[:,1]>rectas[i](centros[:,0]))== True),:].squeeze()
             huber = HuberRegressor(epsilon=1.96).fit(np.expand_dims(datos[:,0],axis=1),datos[:,1])
-            ubicca2=np.where(huber.outliers_==True)[0]
+            ubica2=np.where(huber.outliers_==True)[0]
             for u in range(len(ubica2)):
                 np.delete(centros,ubica[u],axis=0)
                 self.object_prediction_list.pop(ubica[u])
@@ -242,7 +242,7 @@ class PredictionResult:
           ubica=np.where((centros[:,1]>rectas[-1](centros[:,0]))*(centros[:,1]<mascara.shape[0])== True)[0]
           datos=centros[np.where((centros[:,1]>rectas[-1](centros[:,0]))*(centros[:,1]<mascara.shape[0])== True),:].squeeze()
           huber = HuberRegressor(epsilon=1.96).fit(np.expand_dims(datos[:,0],axis=1),datos[:,1])
-          ubicca2=np.where(huber.outliers_==True)[0]
+          ubica2=np.where(huber.outliers_==True)[0]
           for u in range(len(ubica2)):
               np.delete(centros,ubica[u],axis=0)
               self.object_prediction_list.pop(ubica[u])
