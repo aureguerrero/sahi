@@ -217,24 +217,69 @@ class PredictionResult:
         rectas=[np.poly1d([(lineas2[1,i]-lineas2[0,i])/(extrem_derec-extrem_izq),-(lineas2[1,i]-lineas2[0,i])/(extrem_derec-extrem_izq)*extrem_izq+lineas2[0,i]]) for i in range(len(lineas2[0]))]
         lineas_d_surcos=[]
         if len(np.where((centros[:,1]<rectas[0](centros[:,0]))*(centros[:,1]>0)== True)[0])>1:
+            ubica=np.where((centros[:,1]<rectas[0](centros[:,0]))*(centros[:,1]>0)== True)[0]
             datos=centros[np.where((centros[:,1]<rectas[0](centros[:,0]))*(centros[:,1]>0)== True),:].squeeze()
-            huber = HuberRegressor().fit(np.expand_dims(datos[:,0],axis=1),datos[:,1])
+            huber = HuberRegressor(epsilon=1.96).fit(np.expand_dims(datos[:,0],axis=1),datos[:,1])
+            ubicca2=np.where(huber.outliers_==True)[0]
+            for u in range(len(ubica2)):
+                np.delete(centros,ubica[u],axis=0)
+                self.object_prediction_list.pop(ubica[u])
+
             lineas_d_surcos.append(np.poly1d([huber.coef_[0],huber.intercept_]))
   
         for i in range(len(rectas)-1):
           if len(np.where((centros[:,1]<rectas[i+1](centros[:,0]))*(centros[:,1]>rectas[i](centros[:,0]))== True)[0])>1:
+            ubica=np.where((centros[:,1]<rectas[i+1](centros[:,0]))*(centros[:,1]>rectas[i](centros[:,0]))== True)[0]
             datos=centros[np.where((centros[:,1]<rectas[i+1](centros[:,0]))*(centros[:,1]>rectas[i](centros[:,0]))== True),:].squeeze()
-            huber = HuberRegressor().fit(np.expand_dims(datos[:,0],axis=1),datos[:,1])
+            huber = HuberRegressor(epsilon=1.96).fit(np.expand_dims(datos[:,0],axis=1),datos[:,1])
+            ubicca2=np.where(huber.outliers_==True)[0]
+            for u in range(len(ubica2)):
+                np.delete(centros,ubica[u],axis=0)
+                self.object_prediction_list.pop(ubica[u])
             lineas_d_surcos.append(np.poly1d([huber.coef_[0],huber.intercept_]))
     
         if len(np.where((centros[:,1]>rectas[-1](centros[:,0]))*(centros[:,1]<mascara.shape[0])== True)[0])>1:
+          ubica=np.where((centros[:,1]>rectas[-1](centros[:,0]))*(centros[:,1]<mascara.shape[0])== True)[0]
           datos=centros[np.where((centros[:,1]>rectas[-1](centros[:,0]))*(centros[:,1]<mascara.shape[0])== True),:].squeeze()
-          huber = HuberRegressor().fit(np.expand_dims(datos[:,0],axis=1),datos[:,1])
+          huber = HuberRegressor(epsilon=1.96).fit(np.expand_dims(datos[:,0],axis=1),datos[:,1])
+          ubicca2=np.where(huber.outliers_==True)[0]
+          for u in range(len(ubica2)):
+              np.delete(centros,ubica[u],axis=0)
+              self.object_prediction_list.pop(ubica[u])
           lineas_d_surcos.append(np.poly1d([huber.coef_[0],huber.intercept_]))
+        
+        #----------
+        id_surco=0
+        info_d_surcos=[]
+        if len(np.where((centros[:,1]<rectas[0](centros[:,0]))*(centros[:,1]>0)== True)[0])>1:
+            ubica=np.where((centros[:,1]<rectas[0](centros[:,0]))*(centros[:,1]>0)== True)[0]
+            datos=centros[np.where((centros[:,1]<rectas[0](centros[:,0]))*(centros[:,1]>0)== True),:].squeeze()
+            orden=np.sort(datos[:,0])
+
+            info_d_surcos.append([id_surco,[ubica[orden]]])
+            id_surco=id_surco+1
+                                  
+  
+        for i in range(len(rectas)-1):
+          if len(np.where((centros[:,1]<rectas[i+1](centros[:,0]))*(centros[:,1]>rectas[i](centros[:,0]))== True)[0])>1:
+            ubica=np.where((centros[:,1]<rectas[i+1](centros[:,0]))*(centros[:,1]>rectas[i](centros[:,0]))== True)[0]
+            datos=centros[np.where((centros[:,1]<rectas[i+1](centros[:,0]))*(centros[:,1]>rectas[i](centros[:,0]))== True),:].squeeze()
+            orden=np.sort(datos[:,0])
+
+            info_d_surcos.append([id_surco,[ubica[orden]]])
+            id_surco=id_surco+1
+    
+        if len(np.where((centros[:,1]>rectas[-1](centros[:,0]))*(centros[:,1]<mascara.shape[0])== True)[0])>1:
+          ubica=np.where((centros[:,1]>rectas[-1](centros[:,0]))*(centros[:,1]<mascara.shape[0])== True)[0]
+          datos=centros[np.where((centros[:,1]>rectas[-1](centros[:,0]))*(centros[:,1]<mascara.shape[0])== True),:].squeeze()
+          orden=np.sort(datos[:,0])
+
+          info_d_surcos.append([id_surco,[ubica[orden]]])
+          id_surco=id_surco+1
                     
-        return lineas_d_surcos
+        return lineas_d_surcos,info_d_surcos
     def info(self,proporcion=0.5):
-        lineas=self.lineas()
+        lineas,info_d_surcos=self.lineas()
         rotacion=np.arctan(np.mean(np.array([lineas[i][1] for i in range(len(lineas))])))
         siembra=np.zeros((self.image_height,self.image_width),np.uint8)
         for i in range(len(lineas)):
@@ -286,7 +331,7 @@ class PredictionResult:
 #             for i in centro:
 #                 cv2.circle(image, i, 7, (255, 255, 255), -1)
         if lineas is not None or lineas !=0:
-           lineas=self.lineas()
+           lineas,info_d_surcos=self.lineas()
            for i in lineas:
                 cv2.line(image,(0,int(i(0))),(self.image_width-1,int(i(self.image_width-1))),(255,255,255),5)
                 
