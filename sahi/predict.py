@@ -89,21 +89,22 @@ def get_prediction(
         shift_amount=shift_amount,
         full_shape=full_shape,
     )
-    #object_prediction_list: List[ObjectPrediction] = detection_model.object_prediction_list
-    
-    o=0
-    for object_prediction in detection_model.object_prediction_list:
-        if object_prediction:  # if not empty
-            x = object_prediction.bbox.to_coco_bbox()
-            object_prediction.bbox.shift_x=x[0]
-            object_prediction.bbox.shift_y=x[1]
-            object_prediction.mask.shift_x=x[0]
-            object_prediction.mask.shift_y=x[1]
-            object_prediction.mask.bool_mask=object_prediction.mask.bool_mask[x[1]:x[1]+x[3]+1,x[0]:x[0]+x[2]+1]
-            #object_prediction_list.append(object_prediction)
-            detection_model.object_prediction_list[o]=object_prediction
-            o=o+1
     object_prediction_list: List[ObjectPrediction] = detection_model.object_prediction_list
+    
+#     o=0
+#     for object_prediction in detection_model.object_prediction_list:
+#         if object_prediction:  # if not empty
+#             x = object_prediction.bbox.to_coco_bbox()
+#             object_prediction.bbox.shift_x=x[0]
+#             object_prediction.bbox.shift_y=x[1]
+#             object_prediction.mask.shift_x=x[0]
+#             object_prediction.mask.shift_y=x[1]
+#             object_prediction.mask.bool_mask=object_prediction.mask.bool_mask[x[1]:x[1]+x[3]+1,x[0]:x[0]+x[2]+1]
+#             #object_prediction_list.append(object_prediction)
+#             detection_model.object_prediction_list[o]=object_prediction
+#             o=o+1
+#     object_prediction_list: List[ObjectPrediction] = detection_model.object_prediction_list
+#         del detection_model
 
     # postprocess matching predictions
     if postprocess is not None:
@@ -287,18 +288,18 @@ def get_sliced_prediction(
             postprocess=None,
         )
 #         o=0
-#         for object_prediction in prediction_result.object_prediction_list:
-#             if object_prediction:  # if not empty
-#                 x = object_prediction.bbox.to_coco_bbox()
-#                 object_prediction.bbox.shift_x=x[0]
-#                 object_prediction.bbox.shift_y=x[1]
-#                 object_prediction.mask.shift_x=x[0]
-#                 object_prediction.mask.shift_y=x[1]
-#                 object_prediction.mask.bool_mask=object_prediction.mask.bool_mask[x[1]:x[1]+x[3]+1,x[0]:x[0]+x[2]+1]
-#                 #object_prediction_list.append(object_prediction)
+         for object_prediction in prediction_result.object_prediction_list:
+             if object_prediction:  # if not empty
+                 x = object_prediction.bbox.to_coco_bbox()
+                 object_prediction.bbox.shift_x=x[0]
+                 object_prediction.bbox.shift_y=x[1]
+                 object_prediction.mask.shift_x=x[0]
+                 object_prediction.mask.shift_y=x[1]
+                 object_prediction.mask.bool_mask=object_prediction.mask.bool_mask[x[1]:x[1]+x[3]+1,x[0]:x[0]+x[2]+1]
+                 object_prediction_list.append(object_prediction)
 #                 prediction_result.object_prediction_list[o]=object_prediction
 #                 o=o+1
-        object_prediction_list.extend(prediction_result.object_prediction_list)
+#        object_prediction_list.extend(prediction_result.object_prediction_list)
         del prediction_result
 
         print(len(object_prediction_list))
