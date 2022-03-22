@@ -222,9 +222,9 @@ class PredictionResult:
             huber = HuberRegressor().fit(np.expand_dims(datos[:,0],axis=1),datos[:,1])
             ubica2=np.where(np.abs(datos[:,1]-huber.predict(np.expand_dims(datos[:,0],axis=-1)))>np.std(huber.predict(np.expand_dims(datos[:,0],axis=-1))-datos[:,1]))[0]
             if clear is not None:
-                for u in range(len(ubica2)):
-                    np.delete(centros,ubica[u],axis=0)
-                    self.object_prediction_list.pop(ubica[u])
+                u=[i for p in range(len(self.object_prediction_list)) if p not in ubica[ubica2[0]]]
+                centros=centros[u]
+                self.object_prediction_list=[self.object_prediction_list[t] for t in u]
 
             lineas_d_surcos.append(np.poly1d([huber.coef_[0],huber.intercept_]))
   
@@ -235,9 +235,9 @@ class PredictionResult:
             huber = HuberRegressor().fit(np.expand_dims(datos[:,0],axis=1),datos[:,1])
             ubica2=np.where(np.abs(datos[:,1]-huber.predict(np.expand_dims(datos[:,0],axis=-1)))>np.std(huber.predict(np.expand_dims(datos[:,0],axis=-1))-datos[:,1]))[0]
             if clear is not None:
-                for u in range(len(ubica2)):
-                    np.delete(centros,ubica[u],axis=0)
-                    self.object_prediction_list.pop(ubica[u])
+                u=[i for p in range(len(self.object_prediction_list)) if p not in ubica[ubica2[0]]]
+                centros=centros[u]
+                self.object_prediction_list=[self.object_prediction_list[t] for t in u]
             lineas_d_surcos.append(np.poly1d([huber.coef_[0],huber.intercept_]))
     
         if len(np.where((centros[:,1]>rectas[-1](centros[:,0]))*(centros[:,1]<mascara.shape[0])== True)[0])>1:
