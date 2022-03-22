@@ -196,7 +196,7 @@ class PredictionResult:
                      objeto.bbox.to_voc_bbox()[0]:objeto.bbox.to_voc_bbox()[0]+np.shape(mask1)[1]]=mask1
         return mask
     
-    def lineas(self, fft_threshold=0.93, epsilon_h=1.96,clear: int =None):
+    def lineas(self, fft_threshold=0.93, epsilon_h=1.96,clear =None):
         image=self.mascaras()*1
         centros=np.array(self.centroides())
         transf = np.fft.fft2(image-np.mean(image))
