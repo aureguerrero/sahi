@@ -285,6 +285,7 @@ def get_sliced_prediction(
                 prediction_result.object_prediction_list[o]=object_prediction
                 o=o+1
         object_prediction_list.extend(prediction_result.object_prediction_list)
+        del prediction_result
 
         print(len(object_prediction_list))
         
