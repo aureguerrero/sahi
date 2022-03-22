@@ -220,9 +220,10 @@ class PredictionResult:
             ubica=np.where((centros[:,1]<rectas[0](centros[:,0]))*(centros[:,1]>0)== True)[0]
             datos=centros[np.where((centros[:,1]<rectas[0](centros[:,0]))*(centros[:,1]>0)== True),:].squeeze()
             huber = HuberRegressor().fit(np.expand_dims(datos[:,0],axis=1),datos[:,1])
-            ubica2=np.where(np.abs(datos[:,1]-huber.predict(np.expand_dims(datos[:,0],axis=-1)))>np.std(huber.predict(np.expand_dims(datos[:,0],axis=-1))-datos[:,1]))[0]
+            ubica2=np.where(np.abs(datos[:,1]-huber.predict(np.expand_dims(datos[:,0],axis=-1)))>0.5*np.mean(np.array([result.object_prediction_list[l].mask.shape[0] for l in ubica])))
+
             if clear is not None:
-                u=[i for p in range(len(self.object_prediction_list)) if p not in ubica[ubica2[0]]]
+                u=[p for p in range(len(self.object_prediction_list)) if p not in ubica[ubica2[0]]]
                 centros=centros[u]
                 self.object_prediction_list=[self.object_prediction_list[t] for t in u]
 
@@ -233,9 +234,10 @@ class PredictionResult:
             ubica=np.where((centros[:,1]<rectas[i+1](centros[:,0]))*(centros[:,1]>rectas[i](centros[:,0]))== True)[0]
             datos=centros[np.where((centros[:,1]<rectas[i+1](centros[:,0]))*(centros[:,1]>rectas[i](centros[:,0]))== True),:].squeeze()
             huber = HuberRegressor().fit(np.expand_dims(datos[:,0],axis=1),datos[:,1])
-            ubica2=np.where(np.abs(datos[:,1]-huber.predict(np.expand_dims(datos[:,0],axis=-1)))>np.std(huber.predict(np.expand_dims(datos[:,0],axis=-1))-datos[:,1]))[0]
+            ubica2=np.where(np.abs(datos[:,1]-huber.predict(np.expand_dims(datos[:,0],axis=-1)))>0.5*np.mean(np.array([result.object_prediction_list[l].mask.shape[0] for l in ubica])))
+
             if clear is not None:
-                u=[i for p in range(len(self.object_prediction_list)) if p not in ubica[ubica2[0]]]
+                u=[p for p in range(len(self.object_prediction_list)) if p not in ubica[ubica2[0]]]
                 centros=centros[u]
                 self.object_prediction_list=[self.object_prediction_list[t] for t in u]
             lineas_d_surcos.append(np.poly1d([huber.coef_[0],huber.intercept_]))
@@ -246,7 +248,7 @@ class PredictionResult:
             huber = HuberRegressor().fit(np.expand_dims(datos[:,0],axis=1),datos[:,1])
             ubica2=np.where(np.abs(datos[:,1]-huber.predict(np.expand_dims(datos[:,0],axis=-1)))>0.5*np.mean(np.array([result.object_prediction_list[l].mask.shape[0] for l in ubica])))
             if clear is not None:
-                u=[i for p in range(len(self.object_prediction_list)) if p not in ubica[ubica2[0]]]
+                u=[p for p in range(len(self.object_prediction_list)) if p not in ubica[ubica2[0]]]
                 centros=centros[u]
                 self.object_prediction_list=[self.object_prediction_list[t] for t in u]
             lineas_d_surcos.append(np.poly1d([huber.coef_[0],huber.intercept_]))
