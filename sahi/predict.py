@@ -287,18 +287,17 @@ def get_sliced_prediction(
             full_shape=None,
             postprocess=None,
         )
-#         o=0
-         for object_prediction in prediction_result.object_prediction_list:
-             if object_prediction:  # if not empty
-                 x = object_prediction.bbox.to_coco_bbox()
-                 object_prediction.bbox.shift_x=x[0]
-                 object_prediction.bbox.shift_y=x[1]
-                 object_prediction.mask.shift_x=x[0]
-                 object_prediction.mask.shift_y=x[1]
-                 object_prediction.mask.bool_mask=object_prediction.mask.bool_mask[x[1]:x[1]+x[3]+1,x[0]:x[0]+x[2]+1]
-                 object_prediction_list.append(object_prediction)
-#                 prediction_result.object_prediction_list[o]=object_prediction
-#                 o=o+1
+        for object_prediction in prediction_result.object_prediction_list:
+            if object_prediction:  # if not empty
+                x = object_prediction.bbox.to_coco_bbox()
+                object_prediction.bbox.shift_x=x[0]
+                object_prediction.bbox.shift_y=x[1]
+                object_prediction.mask.shift_x=x[0]
+                object_prediction.mask.shift_y=x[1]
+                object_prediction.mask.bool_mask=object_prediction.mask.bool_mask[x[1]:x[1]+x[3]+1,x[0]:x[0]+x[2]+1]
+                object_prediction_list.append(object_prediction)
+#               prediction_result.object_prediction_list[o]=object_prediction
+#               o=o+1
 #        object_prediction_list.extend(prediction_result.object_prediction_list)
         del prediction_result
 
