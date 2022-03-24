@@ -283,8 +283,9 @@ class PredictionResult:
           id_surco=id_surco+1
                     
         return lineas_d_surcos,info_d_surcos
-    def info(self,proporcion=0.5):
+    def info(self,proporcion=0.5,d_surco_metros=0.52):
         lineas,info_d_surcos=self.lineas()
+        centros=self.centroides()
         rotacion=np.arctan(np.mean(np.array([lineas[i][1] for i in range(len(lineas))])))
         siembra=np.zeros((self.image_height,self.image_width),np.uint8)
         for i in range(len(lineas)):
@@ -308,7 +309,40 @@ class PredictionResult:
         Nsurcos   = len(entreLineas[0])
         pix_surco = ( entreLineas[0][-1] - entreLineas[0][0] ) / (Nsurcos-1)
         
-        return {'rotacion': rotacion*180/np.pi,'resolucion_rotacion' : pix_surco,'resolucion_orig': pix_surco*np.cos(rotacion)}
+        resumen=[]
+        for p,t in zip(lineas,info_d_surcos):
+          area=[len(np.where(result.object_prediction_list[l].mask.bool_mask==True)[0])*(d_surco_metros*100/(pix_surco*np.cos(rotacion)))**2 for l in t[1]]
+          dist=[np.sqrt((p(centros[t[1][l]][0])-p(centros[t[1][l+1]][0]))**2
+                                 +(centros[t[1][l]][0]-centros[t[1][l+1]][0])**2)*(d_surco_metros*100/(pix_surco*np.cos(rotacion))) for l in range(len(t[1])-1)]
+          resumen.append({'id':t[0],'recta': p,
+                         'largo':np.sqrt((p(centros[t[1][0]][0])-p(centros[t[1][-1]][0]))**2
+                                 +(centros[t[1][0]][0]-centros[t[1][-1]][0])**2)*(d_surco_metros*100/(pix_surco*np.cos(rotacion)))
+                         ,'plantas':t[1],
+                         'area':area,
+                         'stadist_area':{'cant_plt':len(t[1]),'min':np.min(np.array(area)), 'max':np.max(np.array(area)),
+                                         'promedio':np.mean(np.array(area)),'desv_std':np.std(np.array(area)),
+                                         'CV':np.std(np.array(area))/np.mean(np.array(area))},
+                         'distancias':dist,
+                         'stadist_dist':{'min':np.min(np.array(dist)), 'max':np.max(np.array(dist)),
+                                         'promedio':np.mean(np.array(dist)),'desv_std':np.std(np.array(dist)),
+                                         'CV':np.std(np.array(dist))/np.mean(np.array(dist))}})
+        resumen.append({'id':'total','plantas':[],'area':[],'distancias':[],'stadist_area':{}, 'stadist_dist':{}})
+        for i in range(len(lineas)-1):
+          resumen[-1]['plantas']=list(set().union(resumen[-1]['plantas'],resumen[i]['plantas']))
+          resumen[-1]['area']=list(set().union(resumen[-1]['area'],resumen[i]['area']))
+          resumen[-1]['distancias']=list(set().union(resumen[-1]['distancias'],resumen[i]['distancias']))
+        area=np.array(resumen[-1]['area'])
+        dist=np.array(resumen[-1]['distancias'])
+        resumen[-1]['stadist_area']={'cant_plt':len(resumen[-1]['plantas']),'min':np.min(np.array(area)),
+                                    'max':np.max(np.array(area)),
+                                    'promedio':np.mean(np.array(area)),'desv_std':np.std(np.array(area)),
+                                    'CV':np.std(np.array(area))/np.mean(np.array(area))}
+
+        reumen[-1]['stadist_dist']={'min':np.min(np.array(dist)), 'max':np.max(np.array(dist)),
+                                          'promedio':np.mean(np.array(dist)),'desv_std':np.std(np.array(dist)),
+                                          'CV':np.std(np.array(dist))/np.mean(np.array(dist))}
+        
+        return {'rotacion': rotacion*180/np.pi,'resolucion_rotacion' : pix_surco,'resolucion_orig': pix_surco*np.cos(rotacion),resumen}
            
     def export_visuals(self, export_dir: str = "demo_data/", export_file: str = "prediction_visual", text_size: float = None, text_th: float = None, rect_th: int = None, 
                        etiqueta: int =None, centro: int = None, lineas: int =None, export_format: str = "png"):
