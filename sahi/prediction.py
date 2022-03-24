@@ -314,6 +314,8 @@ class PredictionResult:
           area=[len(np.where(self.object_prediction_list[l].mask.bool_mask==True)[0])*(d_surco_metros*100/(pix_surco*np.cos(rotacion)))**2 for l in t[1]]
           dist=[np.sqrt((p(centros[t[1][l]][0])-p(centros[t[1][l+1]][0]))**2
                                  +(centros[t[1][l]][0]-centros[t[1][l+1]][0])**2)*(d_surco_metros*100/(pix_surco*np.cos(rotacion))) for l in range(len(t[1])-1)]
+          dist_real=[np.sqrt((centros[t[1][l]][1]-centros[t[1][l+1]][1])**2
+                                 +(centros[t[1][l]][0]-centros[t[1][l+1]][0])**2)*(d_surco_metros*100/(pix_surco*np.cos(rotacion))) for l in range(len(t[1])-1)]
           resumen.append({'id':t[0],'recta': p,
                          'largo':np.sqrt((p(centros[t[1][0]][0])-p(centros[t[1][-1]][0]))**2
                                  +(centros[t[1][0]][0]-centros[t[1][-1]][0])**2)*(d_surco_metros*100/(pix_surco*np.cos(rotacion)))
@@ -325,7 +327,11 @@ class PredictionResult:
                          'distancias':dist,
                          'stadist_dist':{'min':np.min(np.array(dist)), 'max':np.max(np.array(dist)),
                                          'promedio':np.mean(np.array(dist)),'desv_std':np.std(np.array(dist)),
-                                         'CV':np.std(np.array(dist))/np.mean(np.array(dist))}})
+                                         'CV':np.std(np.array(dist))/np.mean(np.array(dist))}}
+                         'distancias_real':dist_real,
+                         'stadist_dist_real':{'min':np.min(np.array(dist_real)), 'max':np.max(np.array(dist_real)),
+                                         'promedio':np.mean(np.array(dist_real)),'desv_std':np.std(np.array(dist_real)),
+                                         'CV':np.std(np.array(dist_real))/np.mean(np.array(dist_real))}})
         resumen.append({'id':'total','plantas':[],'area':[],'distancias':[],'stadist_area':{}, 'stadist_dist':{}})
         for i in range(len(lineas)-1):
           resumen[-1]['plantas']=list(set().union(resumen[-1]['plantas'],resumen[i]['plantas']))
