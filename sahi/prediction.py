@@ -338,7 +338,7 @@ class PredictionResult:
                                     'promedio':np.mean(np.array(area)),'desv_std':np.std(np.array(area)),
                                     'CV':np.std(np.array(area))/np.mean(np.array(area))}
 
-        reumen[-1]['stadist_dist']={'min':np.min(np.array(dist)), 'max':np.max(np.array(dist)),
+        resumen[-1]['stadist_dist']={'min':np.min(np.array(dist)), 'max':np.max(np.array(dist)),
                                           'promedio':np.mean(np.array(dist)),'desv_std':np.std(np.array(dist)),
                                           'CV':np.std(np.array(dist))/np.mean(np.array(dist))}
         
