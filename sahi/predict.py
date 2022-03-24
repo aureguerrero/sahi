@@ -89,7 +89,19 @@ def get_prediction(
         shift_amount=shift_amount,
         full_shape=full_shape,
     )
-    object_prediction_list: List[ObjectPrediction] = detection_model.object_prediction_list
+    
+    object_prediction_list=[]
+    for ten in range(len(detection_model.original_predictions['instances'])):
+        boxes=list(detection_model.original_predictions['instances'][ten].get_fields()['pred_boxes'].tensor[0][:].int().numpy())
+        mask=detection_model.original_predictions['instances'][ten].get_fields()['pred_masks'].numpy().squeeze()
+        clase=int(detection_model.original_predictions['instances'][ten].get_fields()['pred_classes'])
+        score=float(detection_model.original_predictions['instances'][ten].get_fields()['scores'])
+        object_prediction_list.append(ObjectPrediction(bbox=boxes,bool_mask=mask,category_name='planta',category_id=clase,score=score))
+        object_prediction_list[ten].mask.bool_mask=object_prediction_list[ten].mask.bool_mask[
+            object_prediction_list[ten].bbox.miny:object_prediction_list[ten].bbox.maxy+1,
+            object_prediction_list[ten].bbox.minx:object_prediction_list[ten].bbox.maxx+1]
+    
+#    object_prediction_list: List[ObjectPrediction] = detection_model.object_prediction_list
     
 #     o=0
 #     for object_prediction in detection_model.object_prediction_list:
@@ -270,11 +282,11 @@ def get_sliced_prediction(
             ],
         )
         # convert sliced predictions to full predictions
-        for object_prediction in prediction_result.object_prediction_list:
-            if object_prediction:  # if not empty
-                b=object_prediction.get_shifted_object_prediction()
-                b.bbox=b.bbox.get_shifted_box()
-                object_prediction_list.append(b)
+#         for object_prediction in prediction_result.object_prediction_list:
+#             if object_prediction:  # if not empty
+#                 b=object_prediction.get_shifted_object_prediction()
+#                 b.bbox=b.bbox.get_shifted_box()
+#                 object_prediction_list.append(b)
     print(len(object_prediction_list))
                 
     # perform standard prediction
@@ -287,15 +299,15 @@ def get_sliced_prediction(
             full_shape=None,
             postprocess=None,
         )
-        for object_prediction in prediction_result.object_prediction_list:
-            if object_prediction:  # if not empty
-                x = object_prediction.bbox.to_coco_bbox()
-                object_prediction.bbox.shift_x=x[0]
-                object_prediction.bbox.shift_y=x[1]
-                object_prediction.mask.shift_x=x[0]
-                object_prediction.mask.shift_y=x[1]
-                object_prediction.mask.bool_mask=object_prediction.mask.bool_mask[x[1]:x[1]+x[3]+1,x[0]:x[0]+x[2]+1]
-                object_prediction_list.append(object_prediction)
+#         for object_prediction in prediction_result.object_prediction_list:
+#             if object_prediction:  # if not empty
+#                 x = object_prediction.bbox.to_coco_bbox()
+#                 object_prediction.bbox.shift_x=x[0]
+#                 object_prediction.bbox.shift_y=x[1]
+#                 object_prediction.mask.shift_x=x[0]
+#                 object_prediction.mask.shift_y=x[1]
+#                 object_prediction.mask.bool_mask=object_prediction.mask.bool_mask[x[1]:x[1]+x[3]+1,x[0]:x[0]+x[2]+1]
+#                 object_prediction_list.append(object_prediction)
 #               prediction_result.object_prediction_list[o]=object_prediction
 #               o=o+1
 #        object_prediction_list.extend(prediction_result.object_prediction_list)
