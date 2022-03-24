@@ -327,18 +327,20 @@ class PredictionResult:
                          'distancias':dist,
                          'stadist_dist':{'min':np.min(np.array(dist)), 'max':np.max(np.array(dist)),
                                          'promedio':np.mean(np.array(dist)),'desv_std':np.std(np.array(dist)),
-                                         'CV':np.std(np.array(dist))/np.mean(np.array(dist))}}
+                                         'CV':np.std(np.array(dist))/np.mean(np.array(dist))},
                          'distancias_real':dist_real,
                          'stadist_dist_real':{'min':np.min(np.array(dist_real)), 'max':np.max(np.array(dist_real)),
                                          'promedio':np.mean(np.array(dist_real)),'desv_std':np.std(np.array(dist_real)),
                                          'CV':np.std(np.array(dist_real))/np.mean(np.array(dist_real))}})
-        resumen.append({'id':'total','plantas':[],'area':[],'distancias':[],'stadist_area':{}, 'stadist_dist':{}})
+        resumen.append({'id':'total','plantas':[],'area':[],'distancias':[],'distancias_real':[],'stadist_area':{}, 'stadist_dist':{},'stadist_dist_real':{}})
         for i in range(len(lineas)-1):
           resumen[-1]['plantas']=list(set().union(resumen[-1]['plantas'],resumen[i]['plantas']))
           resumen[-1]['area']=list(set().union(resumen[-1]['area'],resumen[i]['area']))
           resumen[-1]['distancias']=list(set().union(resumen[-1]['distancias'],resumen[i]['distancias']))
+          resumen[-1]['distancias_real']=list(set().union(resumen[-1]['distancias'],resumen[i]['distancias_real']))
         area=np.array(resumen[-1]['area'])
         dist=np.array(resumen[-1]['distancias'])
+        dist_real=np.array(resumen[-1]['distancias_real'])
         resumen[-1]['stadist_area']={'cant_plt':len(resumen[-1]['plantas']),'min':np.min(np.array(area)),
                                     'max':np.max(np.array(area)),
                                     'promedio':np.mean(np.array(area)),'desv_std':np.std(np.array(area)),
@@ -347,6 +349,10 @@ class PredictionResult:
         resumen[-1]['stadist_dist']={'min':np.min(np.array(dist)), 'max':np.max(np.array(dist)),
                                           'promedio':np.mean(np.array(dist)),'desv_std':np.std(np.array(dist)),
                                           'CV':np.std(np.array(dist))/np.mean(np.array(dist))}
+        
+        resumen[-1]['stadist_dist_real']={'min':np.min(np.array(dist_real)), 'max':np.max(np.array(dist_real)),
+                                          'promedio':np.mean(np.array(dist_real)),'desv_std':np.std(np.array(dist_real)),
+                                          'CV':np.std(np.array(dist_real))/np.mean(np.array(dist_real))}
         
         return {'rotacion': rotacion*180/np.pi,'resolucion_rotacion' : pix_surco,'resolucion_orig': pix_surco*np.cos(rotacion),'resumen':resumen}
            
