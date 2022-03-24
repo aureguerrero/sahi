@@ -311,7 +311,7 @@ class PredictionResult:
         
         resumen=[]
         for p,t in zip(lineas,info_d_surcos):
-          area=[len(np.where(result.object_prediction_list[l].mask.bool_mask==True)[0])*(d_surco_metros*100/(pix_surco*np.cos(rotacion)))**2 for l in t[1]]
+          area=[len(np.where(self.object_prediction_list[l].mask.bool_mask==True)[0])*(d_surco_metros*100/(pix_surco*np.cos(rotacion)))**2 for l in t[1]]
           dist=[np.sqrt((p(centros[t[1][l]][0])-p(centros[t[1][l+1]][0]))**2
                                  +(centros[t[1][l]][0]-centros[t[1][l+1]][0])**2)*(d_surco_metros*100/(pix_surco*np.cos(rotacion))) for l in range(len(t[1])-1)]
           resumen.append({'id':t[0],'recta': p,
