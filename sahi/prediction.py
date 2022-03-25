@@ -9,6 +9,7 @@ from PIL import Image
 from osgeo import gdal, ogr
 import matplotlib.pyplot as plt
 from sklearn.linear_model import HuberRegressor
+from sklearn.linear_model import TheilSenRegressor
 import os
 import PIL
 import cv2
@@ -219,39 +220,54 @@ class PredictionResult:
         if len(np.where((centros[:,1]<rectas[0](centros[:,0]))*(centros[:,1]>0)== True)[0])>1:
             ubica=np.where((centros[:,1]<rectas[0](centros[:,0]))*(centros[:,1]>0)== True)[0]
             datos=centros[np.where((centros[:,1]<rectas[0](centros[:,0]))*(centros[:,1]>0)== True),:].squeeze()
-            huber = HuberRegressor().fit(np.expand_dims(datos[:,0],axis=1),datos[:,1])
-            ubica2=np.where(np.abs(datos[:,1]-huber.predict(np.expand_dims(datos[:,0],axis=-1)))>0.5*np.mean(np.array([self.object_prediction_list[l].mask.shape[0] for l in ubica])))
-
+#             huber = HuberRegressor().fit(np.expand_dims(datos[:,0],axis=1),datos[:,1])
+#             ubica2=np.where(np.abs(datos[:,1]-huber.predict(np.expand_dims(datos[:,0],axis=-1)))>0.5*np.mean(np.array([self.object_prediction_list[l].mask.shape[0] for l in ubica])))
+            theilsen=TheilSenRegressor().fit(np.expand_dims(datos[:,0],axis=1),datos[:,1])
+            ubica2=np.where(np.abs(datos[:,1]-theilsen.predict(np.expand_dims(datos[:,0],axis=-1)))>0.5*np.mean(np.array([self.object_prediction_list[l].mask.shape[0] for l in ubica])))
+            
+            
             if clear is not None:
                 u=[p for p in range(len(self.object_prediction_list)) if p not in ubica[ubica2[0]]]
                 centros=centros[u]
                 self.object_prediction_list=[self.object_prediction_list[t] for t in u]
 
-            lineas_d_surcos.append(np.poly1d([huber.coef_[0],huber.intercept_]))
+#             lineas_d_surcos.append(np.poly1d([huber.coef_[0],huber.intercept_]))
+            lineas_d_surcos.append(np.poly1d([theilsen.coef_[0],theilsen.intercept_]))
   
         for i in range(len(rectas)-1):
           if len(np.where((centros[:,1]<rectas[i+1](centros[:,0]))*(centros[:,1]>rectas[i](centros[:,0]))== True)[0])>1:
             ubica=np.where((centros[:,1]<rectas[i+1](centros[:,0]))*(centros[:,1]>rectas[i](centros[:,0]))== True)[0]
             datos=centros[np.where((centros[:,1]<rectas[i+1](centros[:,0]))*(centros[:,1]>rectas[i](centros[:,0]))== True),:].squeeze()
-            huber = HuberRegressor().fit(np.expand_dims(datos[:,0],axis=1),datos[:,1])
-            ubica2=np.where(np.abs(datos[:,1]-huber.predict(np.expand_dims(datos[:,0],axis=-1)))>0.5*np.mean(np.array([self.object_prediction_list[l].mask.shape[0] for l in ubica])))
-
+#             huber = HuberRegressor().fit(np.expand_dims(datos[:,0],axis=1),datos[:,1])
+#             ubica2=np.where(np.abs(datos[:,1]-huber.predict(np.expand_dims(datos[:,0],axis=-1)))>0.5*np.mean(np.array([self.object_prediction_list[l].mask.shape[0] for l in ubica])))
+            theilsen=TheilSenRegressor().fit(np.expand_dims(datos[:,0],axis=1),datos[:,1])
+            ubica2=np.where(np.abs(datos[:,1]-theilsen.predict(np.expand_dims(datos[:,0],axis=-1)))>0.5*np.mean(np.array([self.object_prediction_list[l].mask.shape[0] for l in ubica])))
+            
+            
             if clear is not None:
                 u=[p for p in range(len(self.object_prediction_list)) if p not in ubica[ubica2[0]]]
                 centros=centros[u]
                 self.object_prediction_list=[self.object_prediction_list[t] for t in u]
-            lineas_d_surcos.append(np.poly1d([huber.coef_[0],huber.intercept_]))
+
+#             lineas_d_surcos.append(np.poly1d([huber.coef_[0],huber.intercept_]))
+            lineas_d_surcos.append(np.poly1d([theilsen.coef_[0],theilsen.intercept_]))
     
         if len(np.where((centros[:,1]>rectas[-1](centros[:,0]))*(centros[:,1]<mascara.shape[0])== True)[0])>1:
             ubica=np.where((centros[:,1]>rectas[-1](centros[:,0]))*(centros[:,1]<mascara.shape[0])== True)[0]
             datos=centros[np.where((centros[:,1]>rectas[-1](centros[:,0]))*(centros[:,1]<mascara.shape[0])== True),:].squeeze()
-            huber = HuberRegressor().fit(np.expand_dims(datos[:,0],axis=1),datos[:,1])
-            ubica2=np.where(np.abs(datos[:,1]-huber.predict(np.expand_dims(datos[:,0],axis=-1)))>0.5*np.mean(np.array([self.object_prediction_list[l].mask.shape[0] for l in ubica])))
+#             huber = HuberRegressor().fit(np.expand_dims(datos[:,0],axis=1),datos[:,1])
+#             ubica2=np.where(np.abs(datos[:,1]-huber.predict(np.expand_dims(datos[:,0],axis=-1)))>0.5*np.mean(np.array([self.object_prediction_list[l].mask.shape[0] for l in ubica])))
+            theilsen=TheilSenRegressor().fit(np.expand_dims(datos[:,0],axis=1),datos[:,1])
+            ubica2=np.where(np.abs(datos[:,1]-theilsen.predict(np.expand_dims(datos[:,0],axis=-1)))>0.5*np.mean(np.array([self.object_prediction_list[l].mask.shape[0] for l in ubica])))
+            
+            
             if clear is not None:
                 u=[p for p in range(len(self.object_prediction_list)) if p not in ubica[ubica2[0]]]
                 centros=centros[u]
                 self.object_prediction_list=[self.object_prediction_list[t] for t in u]
-            lineas_d_surcos.append(np.poly1d([huber.coef_[0],huber.intercept_]))
+
+#             lineas_d_surcos.append(np.poly1d([huber.coef_[0],huber.intercept_]))
+            lineas_d_surcos.append(np.poly1d([theilsen.coef_[0],theilsen.intercept_]))
         
         #----------
         id_surco=0
