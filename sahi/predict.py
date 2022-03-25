@@ -17,6 +17,7 @@ from sahi.postprocess.combine import (
     NMSPostprocess,
     PostprocessPredictions,
 )
+from sahi.annotation import BoundingBox
 from sahi.postprocess.legacy.combine import UnionMergePostprocess
 from sahi.prediction import ObjectPrediction, PredictionResult
 from sahi.slicing import slice_image
@@ -92,7 +93,7 @@ def get_prediction(
     
     object_prediction_list=[]
     for ten in range(len(detection_model.original_predictions['instances'])):
-        boxes=list(detection_model.original_predictions['instances'][ten].get_fields()['pred_boxes'].tensor[0][:].int().numpy())+np.array(shift_amount+shift_amount)
+        boxes=list(detection_model.original_predictions['instances'][ten].get_fields()['pred_boxes'].tensor[0][:].int().numpy()+np.array(shift_amount+shift_amount))
         mask=detection_model.original_predictions['instances'][ten].get_fields()['pred_masks'].numpy().squeeze()
         clase=int(detection_model.original_predictions['instances'][ten].get_fields()['pred_classes'])
         score=float(detection_model.original_predictions['instances'][ten].get_fields()['scores'])
