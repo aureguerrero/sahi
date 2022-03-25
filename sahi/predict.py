@@ -290,6 +290,7 @@ def get_sliced_prediction(
 #                 b=object_prediction.get_shifted_object_prediction()
 #                 b.bbox=b.bbox.get_shifted_box()
 #                 object_prediction_list.append(b)
+    object_prediction_list.extend(prediction_result.object_prediction_list)
     print(len(object_prediction_list))
                 
     # perform standard prediction
@@ -313,7 +314,7 @@ def get_sliced_prediction(
 #                 object_prediction_list.append(object_prediction)
 #               prediction_result.object_prediction_list[o]=object_prediction
 #               o=o+1
-#        object_prediction_list.extend(prediction_result.object_prediction_list)
+        object_prediction_list.extend(prediction_result.object_prediction_list)
         del prediction_result
 
         print(len(object_prediction_list))
