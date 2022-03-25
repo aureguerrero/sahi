@@ -100,10 +100,13 @@ def get_prediction(
         object_prediction_list.append(ObjectPrediction(
             bbox=boxes,bool_mask=mask,
             category_name=detection_model.category_names[clase],
+            full_shape= full_shape,
             category_id=clase,score=score))
         object_prediction_list[ten].mask.bool_mask=object_prediction_list[ten].mask.bool_mask[
             object_prediction_list[ten].bbox.miny:object_prediction_list[ten].bbox.maxy+1,
             object_prediction_list[ten].bbox.minx:object_prediction_list[ten].bbox.maxx+1]
+        object_prediction_list[ten].bbox=BoundingBox(list(np.array( 
+            object_prediction_list[ten].bbox.to_voc_bbox())+np.array(shift_amount+shift_amount)))
     
 #    object_prediction_list: List[ObjectPrediction] = detection_model.object_prediction_list
     
