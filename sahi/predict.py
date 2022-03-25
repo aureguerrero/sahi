@@ -92,7 +92,7 @@ def get_prediction(
     
     object_prediction_list=[]
     for ten in range(len(detection_model.original_predictions['instances'])):
-        boxes=list(detection_model.original_predictions['instances'][ten].get_fields()['pred_boxes'].tensor[0][:].int().numpy())
+        boxes=list(detection_model.original_predictions['instances'][ten].get_fields()['pred_boxes'].tensor[0][:].int().numpy())+np.array(shift_amount+shift_amount)
         mask=detection_model.original_predictions['instances'][ten].get_fields()['pred_masks'].numpy().squeeze()
         clase=int(detection_model.original_predictions['instances'][ten].get_fields()['pred_classes'])
         score=float(detection_model.original_predictions['instances'][ten].get_fields()['scores'])
@@ -284,13 +284,14 @@ def get_sliced_prediction(
                 slice_image_result.original_image_width,
             ],
         )
+        object_prediction_list.extend(prediction_result.object_prediction_list)
         # convert sliced predictions to full predictions
 #         for object_prediction in prediction_result.object_prediction_list:
 #             if object_prediction:  # if not empty
 #                 b=object_prediction.get_shifted_object_prediction()
 #                 b.bbox=b.bbox.get_shifted_box()
 #                 object_prediction_list.append(b)
-    object_prediction_list.extend(prediction_result.object_prediction_list)
+    
     print(len(object_prediction_list))
                 
     # perform standard prediction
