@@ -85,10 +85,10 @@ def get_prediction(
     # process prediction
     time_start = time.time()
     # works only with 1 batch
-    detection_model.convert_original_predictions(
-        shift_amount=shift_amount,
-        full_shape=full_shape,
-    )
+#     detection_model.convert_original_predictions(
+#         shift_amount=shift_amount,
+#         full_shape=full_shape,
+#     )
     
     object_prediction_list=[]
     for ten in range(len(detection_model.original_predictions['instances'])):
@@ -96,7 +96,10 @@ def get_prediction(
         mask=detection_model.original_predictions['instances'][ten].get_fields()['pred_masks'].numpy().squeeze()
         clase=int(detection_model.original_predictions['instances'][ten].get_fields()['pred_classes'])
         score=float(detection_model.original_predictions['instances'][ten].get_fields()['scores'])
-        object_prediction_list.append(ObjectPrediction(bbox=boxes,bool_mask=mask,category_name='planta',category_id=clase,score=score))
+        object_prediction_list.append(ObjectPrediction(
+            bbox=boxes,bool_mask=mask,
+            category_name=detection_model.category_names[clase],
+            category_id=clase,score=score))
         object_prediction_list[ten].mask.bool_mask=object_prediction_list[ten].mask.bool_mask[
             object_prediction_list[ten].bbox.miny:object_prediction_list[ten].bbox.maxy+1,
             object_prediction_list[ten].bbox.minx:object_prediction_list[ten].bbox.maxx+1]
