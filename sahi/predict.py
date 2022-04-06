@@ -347,7 +347,7 @@ def get_sliced_prediction(
         i=0
         while cant_old!=cant_new and i<=2:
             cant_old=len(object_prediction_list2)
-            post.process.match_threshold=1/3+post.process.match_threshold*2/3
+            post.process.match_threshold=post.process.match_threshold-min([post.process.match_threshold/2,abs(1-post.process.match_threshold)/2])
             object_prediction_list2 = postprocess(object_prediction_list)
             cant_new=len(object_prediction_list2)
             object_prediction_list=object_prediction_list2.copy()
