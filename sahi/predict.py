@@ -18,7 +18,7 @@ from sahi.postprocess.combine import (
     NMSPostprocess,
     PostprocessPredictions,
 )
-from sahi.combine import batched_greedy_nmm, greedy_nmm
+from sahi.postprocess.combine import batched_greedy_nmm, greedy_nmm
 from sahi.annotation import BoundingBox
 from sahi.postprocess.legacy.combine import UnionMergePostprocess
 from sahi.prediction import ObjectPrediction, PredictionResult
