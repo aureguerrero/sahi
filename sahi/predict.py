@@ -348,7 +348,8 @@ def get_sliced_prediction(
         while cant_old!=cant_new and i<=2:
             cant_old=len(object_prediction_list2)
             object_prediction_list2 = postprocess(object_prediction_list)
-            postprocess.match_threshold=postprocess.match_threshold-min([max([0,(1-postprocess.match_threshold)/2]),0.1])
+            if perform_standard_pred:
+                postprocess.match_threshold=postprocess.match_threshold-min([max([0,(1-postprocess.match_threshold)/2]),0.1])
             postprocess.match_metric="IOS"
             cant_new=len(object_prediction_list2)
             object_prediction_list=object_prediction_list2.copy()
