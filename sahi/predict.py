@@ -311,13 +311,13 @@ def get_sliced_prediction(
             full_shape=None,
             postprocess=None,
         )
-        ##tam=len(prediction_result.object_prediction_list)
-        ##agregar=prediction_result.object_prediction_list.extend(object_prediction_list)
-        ##agregar_t= batched_greedy_nmm(ObjectPredictionList(agregar).totensor(),
-        ##                              match_threshold=postprocess_match_threshold,
-        ##                              match_metric=postprocess_match_metric,
-        ##                             )
-        ##agregar2=[agregar[i] for i in range(tam) if agregar_t[i] is None]
+        tam=len(prediction_result.object_prediction_list)
+        agregar=prediction_result.object_prediction_list.extend(object_prediction_list)
+        agregar_t= batched_greedy_nmm(ObjectPredictionList(agregar).totensor(),
+                                      match_threshold=postprocess_match_threshold,
+                                      match_metric=postprocess_match_metric,
+                                     )
+        agregar2=[agregar[i] for i in range(tam) if agregar_t[i] is None]
 #         for object_prediction in prediction_result.object_prediction_list:
 #             if object_prediction:  # if not empty
 #                 x = object_prediction.bbox.to_coco_bbox()
@@ -329,9 +329,9 @@ def get_sliced_prediction(
 #                 object_prediction_list.append(object_prediction)
 #               prediction_result.object_prediction_list[o]=object_prediction
 #               o=o+1
-        object_prediction_list.extend(prediction_result.object_prediction_list)
-        ##object_prediction_list.extend(prediction_agregar2)
-        ##del prediction_result,agregar,agregar_t,agregar2
+        #object_prediction_list.extend(prediction_result.object_prediction_list)
+        object_prediction_list.extend(prediction_agregar2)
+        del prediction_result,agregar,agregar_t,agregar2
 
         print(len(object_prediction_list))
         
