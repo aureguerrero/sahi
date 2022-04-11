@@ -314,7 +314,7 @@ def get_sliced_prediction(
         tam=len(prediction_result.object_prediction_list)
         prediction_result.object_prediction_list.extend(object_prediction_list)
         agregar_t= batched_greedy_nmm(ObjectPredictionList(prediction_result.object_prediction_list).totensor(),
-                              match_threshold=postprocess_match_threshold,
+                              match_threshold=0.5,
                               match_metric=postprocess_match_metric,
                               )
         agrega_t=list(agregar_t.items())
