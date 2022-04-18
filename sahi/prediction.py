@@ -13,6 +13,7 @@ from sklearn.linear_model import TheilSenRegressor
 import os
 import PIL
 import cv2
+import scipy.spatial
 from skimage.morphology import skeletonize
 from skimage import measure
 from scipy.ndimage import rotate
@@ -180,7 +181,7 @@ class PredictionResult:
         centros=[]
         for objeto in self.object_prediction_list:
             #c=np.mean(np.where(objeto.mask.bool_mask == True), axis=1).astype(int)
-            c=np.where(objeto.mask.bool_mask == True), axis=1).transpose()
+            c=np.where(objeto.mask.bool_mask == True).transpose()
             aux=c[np.where(np.sum(scipy.spatial.distance_matrix(c,c,p=2),axis=1)==np.min(np.sum(scipy.spatial.distance_matrix(c,c,p=2),axis=1)))[0][0],:]
             c=aux
             centros.append((c[1]+objeto.bbox.to_voc_bbox()[0],c[0]+objeto.bbox.to_voc_bbox()[1]))
