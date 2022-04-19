@@ -318,7 +318,17 @@ def get_sliced_prediction(
                               match_metric=postprocess_match_metric,
                               )
         agrega_t=list(agregar_t.items())
-        prediction_result.object_prediction_list=[prediction_result.object_prediction_list[i] for i in range(len(agrega_t)) if agrega_t[i][0]<tam and len(agrega_t[i][1])==0]
+        tam2=len(prediction_result.object_prediction_list)
+#         prediction_result.object_prediction_list=[prediction_result.object_prediction_list[i] for i in range(len(agrega_t)) if agrega_t[i][0]<tam and len(agrega_t[i][1])==0]
+        conj=set()
+        for i in range(len(agrega_t)):
+            if agrega_t[i][0]<tam and len(set(agrega_t[i][1]) & set(list(range(tam-1,tam2))))>0:
+                conj=set.union(conj,set([agrega_t[i][0]]))
+            if  agrega_t[i][0]>=tam and len(set(agrega_t[i][1]) & set(list(range(tam))))>0:
+                conj=set.union(conj,(set(agrega_t[i][1]) & set(list(range(tam)))))
+        prediction_result.object_prediction_list=[prediction_result.object_prediction_list[i] for i in list(set(list(range(tam)))-conj)]
+ 
+ #                                 
 #         for object_prediction in prediction_result.object_prediction_list:
 #             if object_prediction:  # if not empty
 #                 x = object_prediction.bbox.to_coco_bbox()
