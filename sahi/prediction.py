@@ -24,14 +24,14 @@ from sahi.utils.cv import read_image_as_pil, visualize_object_predictions
 from sahi.utils.file import Path
 
 
-def centroide(mask,bbox):
+def centroide(mask,shift_amount):
     if mask is not None:
         c=np.array(np.where(mask == True)).transpose()
         aux=np.sum(scipy.spatial.distance_matrix(c,c,p=2),axis=1)
         minimo=np.min(aux)
         aux=c[np.where(aux==minimo)[0][0],:]
         c=aux
-        return [c[1]+bbox[0],c[0]+bbox[1]]
+        return [c[1]+shift_amount[0],c[0]+shift_amount[1]]
 
 
 class PredictionScore:
@@ -93,7 +93,7 @@ class ObjectPrediction(ObjectAnnotation):
                 the form of [height, width]
         """
         self.score = PredictionScore(score) 
-        self.centroide= centroide(bool_mask,bbox)
+        self.centroide= centroide(bool_mask,shift_amount)
        # self.bbox.to_voc_bbox()=bbox.to_voc_bbox()
         super().__init__(
             bbox=bbox,
