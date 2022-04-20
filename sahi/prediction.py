@@ -193,7 +193,7 @@ class PredictionResult:
         clases=[]
         for objeto in self.object_prediction_list:
             clases.append(objeto.category.id)
-        return centros
+        return clases
     
     def mascaras(self):
         mask=np.zeros((self.image_height,self.image_width),dtype=np.uint8)
