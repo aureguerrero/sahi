@@ -31,7 +31,7 @@ def centroide(mask,shift_amount):
         minimo=np.min(aux)
         aux=c[np.where(aux==minimo)[0][0],:]
         c=aux
-        return [c[1]+shift_amount[0],c[0]+shift_amount[1]]
+        return [c[1],c[0]]
 
 
 class PredictionScore:
