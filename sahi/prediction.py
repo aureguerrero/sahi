@@ -209,7 +209,7 @@ class PredictionResult:
     
     def lineas(self, fft_threshold=0.93,clear =None):
         image=self.mascaras().copy()*1
-        centros=np.array(self.centroides)
+        centros=np.array(self.centroides.copy())
         transf = np.fft.fft2(image-np.mean(image))
         transf_abs = np.abs(transf)
         transf_max = transf_abs.max()
@@ -238,6 +238,7 @@ class PredictionResult:
             
             if clear is not None:
                 u=[p for p in range(len(self.object_prediction_list)) if p not in ubica[ubica2[0]]]
+                self.centroides=[self.centroides[t] for t in u]
                 centros=centros[u]
                 self.object_prediction_list=[self.object_prediction_list[t] for t in u]
 
@@ -256,6 +257,7 @@ class PredictionResult:
             
             if clear is not None:
                 u=[p for p in range(len(self.object_prediction_list)) if p not in ubica[ubica2[0]]]
+                self.centroides=[self.centroides[t] for t in u]
                 centros=centros[u]
                 self.object_prediction_list=[self.object_prediction_list[t] for t in u]
 
@@ -273,6 +275,7 @@ class PredictionResult:
             
             if clear is not None:
                 u=[p for p in range(len(self.object_prediction_list)) if p not in ubica[ubica2[0]]]
+                self.centroides=[self.centroides[t] for t in u]
                 centros=centros[u]
                 self.object_prediction_list=[self.object_prediction_list[t] for t in u]
 
