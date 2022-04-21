@@ -98,7 +98,7 @@ def get_prediction(
     for ten in range(len(detection_model.original_predictions['instances'])):
         boxes=list(detection_model.original_predictions['instances'][ten].get_fields()['pred_boxes'].tensor[0][:].int().numpy()+np.array(shift_amount+shift_amount))
         mask=detection_model.original_predictions['instances'][ten].get_fields()['pred_masks'].numpy().squeeze()
-        mask=mask[boxes[1]:boxes[3]+1,boxes[0]:boxes[2]+1]
+#         mask=mask[boxes[1]:boxes[3]+1,boxes[0]:boxes[2]+1]
         clase=int(detection_model.original_predictions['instances'][ten].get_fields()['pred_classes'])
         score=float(detection_model.original_predictions['instances'][ten].get_fields()['scores'])
         object_prediction_list.append(ObjectPrediction(
@@ -106,9 +106,9 @@ def get_prediction(
             category_name=detection_model.category_names[clase],
             full_shape= full_shape,
             category_id=clase,score=score, shift_amount= shift_amount))
-#         object_prediction_list[ten].mask.bool_mask=object_prediction_list[ten].mask.bool_mask[
-#             object_prediction_list[ten].bbox.miny:object_prediction_list[ten].bbox.maxy+1,
-#             object_prediction_list[ten].bbox.minx:object_prediction_list[ten].bbox.maxx+1]
+        object_prediction_list[ten].mask.bool_mask=object_prediction_list[ten].mask.bool_mask[
+            object_prediction_list[ten].bbox.miny:object_prediction_list[ten].bbox.maxy+1,
+            object_prediction_list[ten].bbox.minx:object_prediction_list[ten].bbox.maxx+1]
 #         object_prediction_list[ten].bbox=BoundingBox(list(np.array( 
 #             object_prediction_list[ten].bbox.to_voc_bbox())+np.array(shift_amount+shift_amount)))
     
