@@ -190,9 +190,11 @@ class PredictionResult:
         self.image_width, self.image_height = self.image.size
         self.object_prediction_list: List[ObjectPrediction] = object_prediction_list
         self.durations_in_seconds = durations_in_seconds
-        self.centroides=[i.centroide() for i in object_prediction_list]
+#         self.centroides=[i.centroide() for i in object_prediction_list]
        
-        
+    def centroides(self):
+        return [i.centroide() for i in self.object_prediction_list]
+    
     def clases(self):
         clases=[]
         for objeto in self.object_prediction_list:
