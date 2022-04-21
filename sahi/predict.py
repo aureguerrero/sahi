@@ -97,8 +97,8 @@ def get_prediction(
     object_prediction_list=[]
     for ten in range(len(detection_model.original_predictions['instances'])):
         boxes=list(detection_model.original_predictions['instances'][ten].get_fields()['pred_boxes'].tensor[0][:].int().numpy()+np.array(shift_amount+shift_amount))
-#         mask=detection_model.original_predictions['instances'][ten].get_fields()['pred_masks'].numpy().squeeze()
-        mask=detection_model.original_predictions['instances'][ten].get_fields()['pred_masks'].numpy().squeeze()[boxes[1]:boxes[3]+1,boxes[0]:boxes[2]+1]
+        mask=detection_model.original_predictions['instances'][ten].get_fields()['pred_masks'].numpy().squeeze()
+        mask=mask[boxes[1]:boxes[3]+1,boxes[0]:boxes[2]+1]
         clase=int(detection_model.original_predictions['instances'][ten].get_fields()['pred_classes'])
         score=float(detection_model.original_predictions['instances'][ten].get_fields()['scores'])
         object_prediction_list.append(ObjectPrediction(
