@@ -190,11 +190,9 @@ class PredictionResult:
         self.image_width, self.image_height = self.image.size
         self.object_prediction_list: List[ObjectPrediction] = object_prediction_list
         self.durations_in_seconds = durations_in_seconds
-#         self.centroides=[i.centroide() for i in object_prediction_list]
+        self.centroides=[i.centroide() for i in object_prediction_list]
        
-    def centroides(self):
-        return [i.centroide() for i in self.object_prediction_list]
-    
+       
     def clases(self):
         clases=[]
         for objeto in self.object_prediction_list:
@@ -211,7 +209,7 @@ class PredictionResult:
     
     def lineas(self, fft_threshold=0.93,clear =None):
         image=self.mascaras().copy()*1
-        centros=np.array(self.centroides().copy())
+        centros=np.array(self.centroides.copy())
         transf = np.fft.fft2(image-np.mean(image))
         transf_abs = np.abs(transf)
         transf_max = transf_abs.max()
@@ -240,7 +238,7 @@ class PredictionResult:
             
             if clear is not None:
                 u=[p for p in range(len(self.object_prediction_list)) if p not in ubica[ubica2[0]]]
-#                 self.centroides=[self.centroides[t] for t in u]
+                self.centroides=[self.centroides[t] for t in u]
                 centros=centros[u]
                 self.object_prediction_list=[self.object_prediction_list[t] for t in u]
 
@@ -259,7 +257,7 @@ class PredictionResult:
             
             if clear is not None:
                 u=[p for p in range(len(self.object_prediction_list)) if p not in ubica[ubica2[0]]]
-#                 self.centroides=[self.centroides[t] for t in u]
+                self.centroides=[self.centroides[t] for t in u]
                 centros=centros[u]
                 self.object_prediction_list=[self.object_prediction_list[t] for t in u]
 
@@ -277,7 +275,7 @@ class PredictionResult:
             
             if clear is not None:
                 u=[p for p in range(len(self.object_prediction_list)) if p not in ubica[ubica2[0]]]
-#                 self.centroides=[self.centroides[t] for t in u]
+                self.centroides=[self.centroides[t] for t in u]
                 centros=centros[u]
                 self.object_prediction_list=[self.object_prediction_list[t] for t in u]
 
@@ -404,7 +402,7 @@ class PredictionResult:
         image = cv2.addWeighted(image, 1, rgb_mask, 0.4, 0)
         
         if centro is not None or centro !=0:
-            centro=self.centroides()
+            centro=self.centroides
             ptos=np.zeros_like(image,dtype=np.uint8)
             centro=np.array(centro)
             ptos[centro[:,1],centro[:,0],:]=255
