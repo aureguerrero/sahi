@@ -404,7 +404,7 @@ class PredictionResult:
         image = cv2.addWeighted(image, 1, rgb_mask, 0.4, 0)
         
         if centro is not None or centro !=0:
-            centro=self.centroides
+            centro=self.centroides()
             ptos=np.zeros_like(image,dtype=np.uint8)
             centro=np.array(centro)
             ptos[centro[:,1],centro[:,0],:]=255
