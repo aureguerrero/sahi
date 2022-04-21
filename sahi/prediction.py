@@ -190,19 +190,9 @@ class PredictionResult:
         self.image_width, self.image_height = self.image.size
         self.object_prediction_list: List[ObjectPrediction] = object_prediction_list
         self.durations_in_seconds = durations_in_seconds
+        self.centroides=[i.centroide() for i in object_prediction_list]
        
-    def centroides(self):
-        centros=[]
-        for objeto in self.object_prediction_list:
-            #c=np.mean(np.where(objeto.mask.bool_mask == True), axis=1).astype(int)
-            c=np.array(np.where(objeto.mask.bool_mask == True)).transpose()
-            aux=np.sum(scipy.spatial.distance_matrix(c,c,p=2),axis=1)
-            minimo=np.min(aux)
-            aux=c[np.where(aux==minimo)[0][0],:]
-            c=aux
-            centros.append((c[1]+objeto.bbox.to_voc_bbox()[0],c[0]+objeto.bbox.to_voc_bbox()[1]))
-        return centros
-    
+        
     def clases(self):
         clases=[]
         for objeto in self.object_prediction_list:
@@ -218,12 +208,12 @@ class PredictionResult:
         return mask
     
     def lineas(self, fft_threshold=0.93,clear =None):
-        image=self.mascaras()*1
-        centros=np.array(self.centroides())
+        image=self.mascaras().copy()*1
+        centros=np.array(self.centroides)
         transf = np.fft.fft2(image-np.mean(image))
         transf_abs = np.abs(transf)
         transf_max = transf_abs.max()
-        mascara=self.mascaras()
+        mascara=self.mascaras().copy()
         transf_abs[transf_abs<transf_max*fft_threshold]=0
         ifft = np.fft.ifft2(transf_abs*transf)
         ifft = (ifft / np.max(ifft))+1
@@ -321,7 +311,7 @@ class PredictionResult:
         return lineas_d_surcos,info_d_surcos
     def info(self,proporcion=0.5,d_surco_metros=0.52):
         lineas,info_d_surcos=self.lineas()
-        centros=self.centroides()
+        centros=self.centroides
         rotacion=np.arctan(np.mean(np.array([lineas[i][1] for i in range(len(lineas))])))
         siembra=np.zeros((self.image_height,self.image_width),np.uint8)
         for i in range(len(lineas)):
@@ -409,7 +399,7 @@ class PredictionResult:
         image = cv2.addWeighted(image, 1, rgb_mask, 0.4, 0)
         
         if centro is not None or centro !=0:
-            centro=self.centroides()
+            centro=self.centroides
             ptos=np.zeros_like(image,dtype=np.uint8)
             centro=np.array(centro)
             ptos[centro[:,1],centro[:,0],:]=255
