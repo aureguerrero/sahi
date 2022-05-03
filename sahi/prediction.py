@@ -26,7 +26,7 @@ from sahi.utils.file import Path
 
 def centroide(mask,shift_amount=[0,0]):
     if mask is not None:
-        c=np.array(np.where(mask == True)).transpose()
+        c=np.array(np.where(skeletonize(mask))).transpose()
         aux=np.sum(scipy.spatial.distance_matrix(c,c,p=2),axis=1)
         minimo=np.min(aux)
         aux=c[np.where(aux==minimo)[0][0],:]
