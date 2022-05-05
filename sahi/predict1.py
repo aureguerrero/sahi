@@ -310,6 +310,7 @@ def get_sliced_prediction(
     )
     
     lineas=result.lineas(clear=1)[0]
+    del result
     ancho=0.7*np.mean([lineas[i+1](0)-lineas[i](0) for i in range(len(lineas)-1)])
     limites=[[int(np.max([0,lineas[i](0)-ancho])),int(np.min([lineas[i](0)+ancho,result.image_height]))] for i in range(len(lineas))]
     imag_surc=[np.array(result.image)[i[0]:i[1],:,:] for i in limites]
