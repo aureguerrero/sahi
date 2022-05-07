@@ -27,6 +27,8 @@ from sahi.postprocess.utils import ObjectPredictionList, has_match, merge_object
 from sahi.utils.coco import Coco, CocoImage
 from sahi.utils.cv import crop_object_predictions, read_image_as_pil, visualize_object_predictions
 from sahi.utils.file import Path, import_class, increment_path, list_files, save_json, save_pickle
+from skimage.morphology import skeletonize
+
 
 MODEL_TYPE_TO_MODEL_CLASS_NAME = {
     "mmdet": "MmdetDetectionModel",
@@ -51,7 +53,6 @@ def get_prediction(
 ) -> PredictionResult:
     """
     Function for performing prediction for given image using given detection_model.
-
     Arguments:
         image: str or np.ndarray
             Location of image or numpy image matrix to slice
@@ -67,7 +68,6 @@ def get_prediction(
         verbose: int
             0: no print (default)
             1: print prediction duration
-
     Returns:
         A dict with fields:
             object_prediction_list: a list of ObjectPrediction
@@ -165,7 +165,6 @@ def get_sliced_prediction(
 ) -> PredictionResult:
     """
     Function for slice image + get predicion for each slice + combine predictions in full image.
-
     Args:
         image: str or np.ndarray
             Location of image or numpy image matrix to slice
@@ -202,7 +201,6 @@ def get_sliced_prediction(
             0: no print
             1: print number of slices (default)
             2: print number of slices and slice/prediction durations
-
     Returns:
         A Dict with fields:
             object_prediction_list: a list of sahi.prediction.ObjectPrediction
@@ -305,19 +303,44 @@ def get_sliced_prediction(
             ],
         )
         object_prediction_list.extend(prediction_result.object_prediction_list)
-    result=PredictionResult(
-        image=image, object_prediction_list=object_prediction_list, durations_in_seconds=durations_in_seconds
-    )
+    mask=np.zeros((object_prediction_list[0].mask.full_shape_height,
+                   object_prediction_list[0].mask.full_shape_width),dtype=np.uint8)
+    for objeto in object_prediction_list:
+        mask1 = objeto.mask.bool_mask*1
+        mask[objeto.bbox.to_voc_bbox()[1]:objeto.bbox.to_voc_bbox()[1]+np.shape(mask1)[0],
+             bjeto.bbox.to_voc_bbox()[0]:objeto.bbox.to_voc_bbox()[0]+np.shape(mask1)[1]]= mask[objeto.bbox.to_voc_bbox()[1]:
+                                                                                                objeto.bbox.to_voc_bbox()[1]+np.shape(mask1)[0],
+                                                                                                objeto.bbox.to_voc_bbox()[0]:
+                                                                                                objeto.bbox.to_voc_bbox()[0]+np.shape(mask1)[1]]+mask1
+    mask[np.where(mask)>1]=objeto.category.id+1
     
-    lineas=result.lineas(clear=1)[0]
-    del object_prediction_list, prediction_result
-    result.objetct_prediction_list=[]
-    ancho=0.7*np.mean([lineas[i+1](0)-lineas[i](0) for i in range(len(lineas)-1)])
-    limites=[[int(np.max([0,lineas[i](0)-ancho])),int(np.min([lineas[i](0)+ancho,result.image_height]))] for i in range(len(lineas))]
-    imag_surc=[np.array(result.image)[i[0]:i[1],:,:] for i in limites]
+    transf = np.fft.fft2(mask-np.mean(mask))
+    transf_abs = np.abs(transf)
+    transf_max = transf_abs.max()
+    transf_abs[transf_abs<transf_max*0.93]=0
+    ifft = np.fft.ifft2(transf_abs*transf)
+    ifft = (ifft / np.max(ifft))+1
+    img_lines_aux = np.abs(ifft)
+    img_lines_aux_norm=img_lines_aux/img_lines_aux.max()
+    img_lines = np.zeros_like(img_lines_aux_norm)
+    img_lines [ img_lines_aux_norm < 0.2] = 1
+    lineas_entre_siembra = skeletonize(img_lines)
+    extrem_izq=np.percentile(np.where(lineas_entre_siembra==True)[1],5)
+    extrem_derec=np.percentile(np.where(lineas_entre_siembra==True)[1],95)
+    lineas2=np.array([np.where(lineas_entre_siembra[:,int(extrem_izq)]==True),np.where(lineas_entre_siembra[:,int(extrem_derec)]==True)]).squeeze()
+    lineas2=list(lineas2)
+    if lineas2[-1]<np.shape(mask)[0]:
+      lineas2.append(np.shape(mask)[0])
+    if lineas2[0]>0:
+      lineas2.insert(0,0)
+    
+    limites=[[lineas2[i],lineas2[i+1]] for i in range(len(lineas2)-1)]
+    ima=read_image_as_pil(image)
+    imag_surc=[np.array(ima)[i[0]:i[1],:,:] for i in limites]
     object_prediction_list=[]
     for l in range(len(imag_surc)):
-        slice_s=slice_image(imag_surc[l],slice_height=slice_height,slice_width=slice_width,
+        slice_s=slice_image(imag_surc[l],slice_height=
+                            int(np.max([slice_height,limites[l][1]-limites[0][1]+1])),slice_width=slice_width,
                     overlap_height_ratio=overlap_height_ratio,overlap_width_ratio=overlap_width_ratio,)
         for t in range(len(slice_s.starting_pixels)):
             slice_s.starting_pixels[t][1]=limites[l][0]
@@ -332,7 +355,6 @@ def get_sliced_prediction(
                 ],
             )
             object_prediction_list.extend(prediction_result.object_prediction_list)
-            del prediction_result
 
     print(len(object_prediction_list))
                 
@@ -443,7 +465,6 @@ def predict(
 ):
     """
     Performs prediction for all present images in given folder.
-
     Args:
         model_type: str
             mmdet for 'MmdetDetectionModel', 'yolov5' for 'Yolov5DetectionModel'.
@@ -756,7 +777,6 @@ def predict_fiftyone(
 ):
     """
     Performs prediction for all present images in given folder.
-
     Args:
         model_type: str
             mmdet for 'MmdetDetectionModel', 'yolov5' for 'Yolov5DetectionModel'.
