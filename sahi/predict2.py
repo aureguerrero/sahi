@@ -312,10 +312,11 @@ def get_sliced_prediction(
     for objeto in object_prediction_list:
         mask1 = objeto.mask.bool_mask*1
         mask[objeto.bbox.to_voc_bbox()[1]:objeto.bbox.to_voc_bbox()[1]+np.shape(mask1)[0],
-             objeto.bbox.to_voc_bbox()[0]:objeto.bbox.to_voc_bbox()[0]+np.shape(mask1)[1]]=
-        mask[objeto.bbox.to_voc_bbox()[1]:objeto.bbox.to_voc_bbox()[1]+np.shape(mask1)[0],
-             objeto.bbox.to_voc_bbox()[0]:objeto.bbox.to_voc_bbox()[0]+np.shape(mask1)[1]]+mask1
-        mask[np.where(mask)>1]=objeto.category.id+1
+             bjeto.bbox.to_voc_bbox()[0]:objeto.bbox.to_voc_bbox()[0]+np.shape(mask1)[1]]= mask[objeto.bbox.to_voc_bbox()[1]:
+                                                                                                objeto.bbox.to_voc_bbox()[1]+np.shape(mask1)[0],
+                                                                                                objeto.bbox.to_voc_bbox()[0]:
+                                                                                                objeto.bbox.to_voc_bbox()[0]+np.shape(mask1)[1]]+mask1
+    mask[np.where(mask)>1]=objeto.category.id+1
     
     transf = np.fft.fft2(mask-np.mean(mask))
     transf_abs = np.abs(transf)
