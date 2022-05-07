@@ -202,9 +202,13 @@ class PredictionResult:
     def mascaras(self):
         mask=np.zeros((self.image_height,self.image_width),dtype=np.uint8)
         for objeto in self.object_prediction_list:
-            mask1 = objeto.mask.bool_mask*(objeto.category.id+1)
+            mask1 = objeto.mask.bool_mask*1#(objeto.category.id+1)
             mask[objeto.bbox.to_voc_bbox()[1]:objeto.bbox.to_voc_bbox()[1]+np.shape(mask1)[0],
-                     objeto.bbox.to_voc_bbox()[0]:objeto.bbox.to_voc_bbox()[0]+np.shape(mask1)[1]]=mask1
+                     objeto.bbox.to_voc_bbox()[0]:objeto.bbox.to_voc_bbox()[0]+np.shape(mask1)[1]]=mask[objeto.bbox.to_voc_bbox()[1]:
+                                                                                                        objeto.bbox.to_voc_bbox()[1]+np.shape(mask1)[0],
+                                                                                                        objeto.bbox.to_voc_bbox()[0]:objeto.bbox.to_voc_bbox()[0]
+                                                                                                        +np.shape(mask1)[1]]+mask1
+            mask[np.where(mask>0)]=objeto.category.id+1
         return mask
     
     def lineas(self, fft_threshold=0.93,nminppl=10,clear =None):
