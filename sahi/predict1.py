@@ -332,7 +332,7 @@ def get_sliced_prediction(
                 ],
             )
             object_prediction_list.extend(prediction_result.object_prediction_list)
-            del (prediction_result
+            del prediction_result
 
     print(len(object_prediction_list))
                 
