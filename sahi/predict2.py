@@ -331,7 +331,7 @@ def get_sliced_prediction(
     lineas_entre_siembra = skeletonize(img_lines)
     extrem_izq=np.percentile(np.where(lineas_entre_siembra==True)[1],5)
     extrem_derec=np.percentile(np.where(lineas_entre_siembra==True)[1],95)
-    lineas2=np.array([np.where(lineas_entre_siembra[:,int(extrem_izq)]==True),np.where(lineas_entre_siembra[:,int(extrem_derec)]==True)]).squeeze()
+    lineas2=np.max(np.array([np.where(lineas_entre_siembra[:,int(extrem_izq)]==True),np.where(lineas_entre_siembra[:,int(extrem_derec)]==True)]).squeeze(),axis=0)
     lineas2=list(lineas2)
     if lineas2[-1]<np.shape(mask)[0]:
       lineas2.append(np.shape(mask)[0])
