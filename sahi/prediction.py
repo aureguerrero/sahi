@@ -384,7 +384,7 @@ class PredictionResult:
                                          'promedio':np.mean(np.array(dist_real)),'desv_std':np.std(np.array(dist_real)),
                                          'CV':np.std(np.array(dist_real))/np.mean(np.array(dist_real))}})
         resumen.append({'id':'total','plantas':[],'area':[],'distancias':[],'distancias_real':[],'stadist_area':{}, 'stadist_dist':{},'stadist_dist_real':{}})
-        for i in range(len(lineas)-1):
+        for i in range(len(lineas)):
           resumen[-1]['plantas']=list(set().union(resumen[-1]['plantas'],resumen[i]['plantas']))
           resumen[-1]['area']=list(set().union(resumen[-1]['area'],resumen[i]['area']))
           resumen[-1]['distancias']=list(set().union(resumen[-1]['distancias'],resumen[i]['distancias']))
