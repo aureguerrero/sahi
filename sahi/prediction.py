@@ -231,6 +231,7 @@ class PredictionResult:
         lineas2=np.array([np.where(lineas_entre_siembra[:,int(extrem_izq)]==True),np.where(lineas_entre_siembra[:,int(extrem_derec)]==True)]).squeeze()
         rectas=[np.poly1d([(lineas2[1,i]-lineas2[0,i])/(extrem_derec-extrem_izq),-(lineas2[1,i]-lineas2[0,i])/(extrem_derec-extrem_izq)*extrem_izq+lineas2[0,i]]) for i in range(len(lineas2[0]))]
         lineas_d_surcos=[]
+        object_prediction_list=[]
         if len(np.where((centros[:,1]<rectas[0](centros[:,0]))*(centros[:,1]>0)== True)[0])>1:
             ubica=np.where((centros[:,1]<rectas[0](centros[:,0]))*(centros[:,1]>0)== True)[0]
             if len(np.where((centros[:,1]<rectas[0](centros[:,0]))*(centros[:,1]>0)== True)[0])<nminppl:
@@ -251,6 +252,7 @@ class PredictionResult:
                     self.centroides=[self.centroides[t] for t in u]
                     centros=centros[u]
                     self.object_prediction_list=[self.object_prediction_list[t] for t in u]
+                    object_prediction_list.extend([self.object_prediction_list[t] for t in u])
 
     #             lineas_d_surcos.append(np.poly1d([huber.coef_[0],huber.intercept_]))
                 lineas_d_surcos.append(np.poly1d([theilsen.coef_[0],theilsen.intercept_]))
@@ -276,6 +278,7 @@ class PredictionResult:
                     self.centroides=[self.centroides[t] for t in u]
                     centros=centros[u]
                     self.object_prediction_list=[self.object_prediction_list[t] for t in u]
+                    object_prediction_list.extend([self.object_prediction_list[t] for t in u])
 
     #             lineas_d_surcos.append(np.poly1d([huber.coef_[0],huber.intercept_]))
                 lineas_d_surcos.append(np.poly1d([theilsen.coef_[0],theilsen.intercept_]))
@@ -300,6 +303,7 @@ class PredictionResult:
                     self.centroides=[self.centroides[t] for t in u]
                     centros=centros[u]
                     self.object_prediction_list=[self.object_prediction_list[t] for t in u]
+                    object_prediction_list.extend([self.object_prediction_list[t] for t in u])
 
     #             lineas_d_surcos.append(np.poly1d([huber.coef_[0],huber.intercept_]))
                 lineas_d_surcos.append(np.poly1d([theilsen.coef_[0],theilsen.intercept_]))
@@ -333,7 +337,7 @@ class PredictionResult:
           info_d_surcos.append([id_surco,ubica[[np.where(datos[:,0]==np.sort(datos[:,0])[i])[0][0] for i in range(len(datos[:,0]))]]])
           id_surco=id_surco+1
                     
-        return lineas_d_surcos,info_d_surcos
+        return lineas_d_surcos,info_d_surcos,object_prediction_list
     def info(self,proporcion=0.5,d_surco_metros=0.52):
         lineas,info_d_surcos=self.lineas()
         centros=self.centroides
