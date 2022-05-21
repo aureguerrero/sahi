@@ -251,7 +251,7 @@ class PredictionResult:
                     u=[p for p in range(len(self.object_prediction_list)) if p not in ubica[ubica2[0]]]
                     self.centroides=[self.centroides[t] for t in u]
                     centros=centros[u]
-                    self.object_prediction_list=[self.object_prediction_list[t] for t in u]
+#                     self.object_prediction_list=[self.object_prediction_list[t] for t in u]
                     object_prediction_list.extend([self.object_prediction_list[t] for t in u])
 
     #             lineas_d_surcos.append(np.poly1d([huber.coef_[0],huber.intercept_]))
@@ -277,7 +277,7 @@ class PredictionResult:
                     u=[p for p in range(len(self.object_prediction_list)) if p not in ubica[ubica2[0]]]
                     self.centroides=[self.centroides[t] for t in u]
                     centros=centros[u]
-                    self.object_prediction_list=[self.object_prediction_list[t] for t in u]
+#                     self.object_prediction_list=[self.object_prediction_list[t] for t in u]
                     object_prediction_list.extend([self.object_prediction_list[t] for t in u])
 
     #             lineas_d_surcos.append(np.poly1d([huber.coef_[0],huber.intercept_]))
@@ -302,7 +302,7 @@ class PredictionResult:
                     u=[p for p in range(len(self.object_prediction_list)) if p not in ubica[ubica2[0]]]
                     self.centroides=[self.centroides[t] for t in u]
                     centros=centros[u]
-                    self.object_prediction_list=[self.object_prediction_list[t] for t in u]
+#                     self.object_prediction_list=[self.object_prediction_list[t] for t in u]
                     object_prediction_list.extend([self.object_prediction_list[t] for t in u])
 
     #             lineas_d_surcos.append(np.poly1d([huber.coef_[0],huber.intercept_]))
