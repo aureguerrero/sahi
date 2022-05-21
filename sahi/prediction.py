@@ -232,6 +232,7 @@ class PredictionResult:
         rectas=[np.poly1d([(lineas2[1,i]-lineas2[0,i])/(extrem_derec-extrem_izq),-(lineas2[1,i]-lineas2[0,i])/(extrem_derec-extrem_izq)*extrem_izq+lineas2[0,i]]) for i in range(len(lineas2[0]))]
         lineas_d_surcos=[]
         object_prediction_list=[]
+        centro2=[]
     
         if len(np.where((centros[:,1]<rectas[0](centros[:,0]))*(centros[:,1]>0)== True)[0])>1:
             ubica=np.where((centros[:,1]<rectas[0](centros[:,0]))*(centros[:,1]>0)== True)[0]
@@ -322,7 +323,8 @@ class PredictionResult:
 
             info_d_surcos.append([id_surco,ubica[[np.where(datos[:,0]==np.sort(datos[:,0])[i])[0][0] for i in range(len(datos[:,0]))]]])
             id_surco=id_surco+1
-            object_prediction_list.extend([self.objct_prediction_list[u] for u in ubica])
+            object_prediction_list.extend([self.object_prediction_list[u] for u in ubica])
+            centro2.extend([self.centroides[u] for u in ubica])
                                   
   
         for i in range(len(rectas)-1):
@@ -333,7 +335,8 @@ class PredictionResult:
 
             info_d_surcos.append([id_surco,ubica[[np.where(datos[:,0]==np.sort(datos[:,0])[i])[0][0] for i in range(len(datos[:,0]))]]])
             id_surco=id_surco+1
-            object_prediction_list.extend([self.objct_prediction_list[u] for u in ubica])
+            object_prediction_list.extend([self.object_prediction_list[u] for u in ubica])
+            centro2.extend([self.centroides[u] for u in ubica])
     
         if len(np.where((centros[:,1]>rectas[-1](centros[:,0]))*(centros[:,1]<mascara.shape[0])== True)[0])>nminppl:
           ubica=np.where((centros[:,1]>rectas[-1](centros[:,0]))*(centros[:,1]<mascara.shape[0])== True)[0]
@@ -342,8 +345,11 @@ class PredictionResult:
 
           info_d_surcos.append([id_surco,ubica[[np.where(datos[:,0]==np.sort(datos[:,0])[i])[0][0] for i in range(len(datos[:,0]))]]])
           id_surco=id_surco+1
-          object_prediction_list.extend([self.objct_prediction_list[u] for u in ubica])
-        self.objct_prediction_list=objct_prediction_list
+          object_prediction_list.extend([self.object_prediction_list[u] for u in ubica])
+          centro2.extend([self.centroides[u] for u in ubica])
+        
+        self.object_prediction_list=object_prediction_list
+        self.centroides=centro2
                     
         return lineas_d_surcos,info_d_surcos
     def info(self,proporcion=0.5,d_surco_metros=0.52):
