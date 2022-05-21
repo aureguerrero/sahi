@@ -251,7 +251,7 @@ class PredictionResult:
                 if clear is not None:
                     u=[p for p in range(len(self.object_prediction_list)) if p not in ubica[ubica2[0]]]
                     self.centroides=[self.centroides[t] for t in u]
-                    object_prediction_list=[self.object_prediction_list[t] for t in u]
+#                     object_prediction_list=[self.object_prediction_list[t] for t in u]
                     centros=centros[u]
                     self.object_prediction_list=[self.object_prediction_list[t] for t in u]
                     object_prediction_list.extend([self.object_prediction_list[t] for t in u])
@@ -278,7 +278,7 @@ class PredictionResult:
                 if clear is not None:
                     u=[p for p in range(len(self.object_prediction_list)) if p not in ubica[ubica2[0]]]
                     self.centroides=[self.centroides[t] for t in u]
-                    object_prediction_list=[self.object_prediction_list[t] for t in u]
+#                     object_prediction_list=[self.object_prediction_list[t] for t in u]
                     centros=centros[u]
                     self.object_prediction_list=[self.object_prediction_list[t] for t in u]
                     
@@ -304,7 +304,7 @@ class PredictionResult:
                 if clear is not None:
                     u=[p for p in range(len(self.object_prediction_list)) if p not in ubica[ubica2[0]]]
                     self.centroides=[self.centroides[t] for t in u]
-                    object_prediction_list=[self.object_prediction_list[t] for t in u]
+#                     object_prediction_list=[self.object_prediction_list[t] for t in u]
                     centros=centros[u]
                     self.object_prediction_list=[self.object_prediction_list[t] for t in u]
                     
@@ -343,7 +343,7 @@ class PredictionResult:
           info_d_surcos.append([id_surco,ubica[[np.where(datos[:,0]==np.sort(datos[:,0])[i])[0][0] for i in range(len(datos[:,0]))]]])
           id_surco=id_surco+1
                     
-        return lineas_d_surcos,info_d_surcos,object_prediction_list
+        return lineas_d_surcos,info_d_surcos
     def info(self,proporcion=0.5,d_surco_metros=0.52):
         lineas,info_d_surcos=self.lineas()
         centros=self.centroides
@@ -423,7 +423,7 @@ class PredictionResult:
         return {'rotacion': rotacion*180/np.pi,'resolucion_rotacion' : pix_surco,'resolucion_orig': pix_surco*np.cos(rotacion),'resumen':resumen}
            
     def export_visuals(self, export_dir: str = "demo_data/", export_file: str = "prediction_visual", text_size: float = None, text_th: float = None, rect_th: int = None, 
-                       etiqueta: int =None, centro: int = None, lineas: int =None, export_format: str = "png"):
+                       etiqueta: int =None, centro: int = None, lineas: int =None, clear=None, export_format: str = "png"):
         
         Path(export_dir).mkdir(parents=True, exist_ok=True)
         image=np.array(self.image)
