@@ -379,7 +379,10 @@ class PredictionResult:
         y_crop_bottom_modified = y_crop_top+entreLineas[0][-1]
         
         Nsurcos   = len(entreLineas[0])
-        pix_surco = ( entreLineas[0][-1] - entreLineas[0][0] ) / (Nsurcos-1)
+        if Nsurcos>1:
+            pix_surco = ( entreLineas[0][-1] - entreLineas[0][0] ) / (Nsurcos-1)
+        else:
+            pix_surco = entreLineas[0][0]
         
         resumen=[]
         for p,t in zip(lineas,info_d_surcos):
