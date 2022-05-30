@@ -371,6 +371,9 @@ class PredictionResult:
     
         transecta = skele_new[y_crop_top:y_crop_bottom,int(width*0.5)]
         entreLineas = np.where(transecta==1)
+        if len(entreLineas[0])==0:
+            transecta=skele_new[:,int(width*0.5)]
+            entreLineas = np.where(transecta==1)
 
         y_crop_top_modified = y_crop_top+entreLineas[0][0]
         y_crop_bottom_modified = y_crop_top+entreLineas[0][-1]
