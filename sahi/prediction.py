@@ -434,7 +434,7 @@ class PredictionResult:
                                           'promedio':np.mean(np.array(dist_real)),'desv_std':np.std(np.array(dist_real)),
                                           'CV':np.std(np.array(dist_real))/np.mean(np.array(dist_real))}
         
-        return {'rotacion': rotacion*180/np.pi,'resolucion_rotacion' : pix_surco,'resolucion_orig': pix_surco*np.cos(rotacion),'resumen':resumen}
+        return {'rotacion': rotacion*180/np.pi,'resolucion_rotacion' : info_d_surcos/pix_surco,'resolucion_orig': info_d_surcos/(pix_surco*np.cos(rotacion)),'resumen':resumen}
            
     def export_visuals(self, export_dir: str = "demo_data/", export_file: str = "prediction_visual", text_size: float = None, text_th: float = None, rect_th: int = None, 
                        etiqueta: int =None, centro: int = None, lineas: int =None, clear=None, export_format: str = "png"):
