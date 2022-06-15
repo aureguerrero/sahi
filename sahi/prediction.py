@@ -527,7 +527,7 @@ class PredictionResult:
     def info(self,proporcion=0.5,d_surco_metros=0.52):
         lineas,info_d_surcos=self.lineas()
         centros=self.centroides
-        media_d_pendientes=np.mean([k['ecuac'][0]) for k in info_d_surcos])
+        media_d_pendientes=np.mean([k['ecuac'][0] for k in info_d_surcos])
         dist_b=np.mean([np.abs(info_d_surcos[k]['ecuac'][0]-info_d_surcos[k+1]['ecuac'][0]) for k in range(len(info_d_surcos)-1)])
         dist_rec=np.mean([np.abs(info_d_surcos[k]['ecuac'][0]-info_d_surcos[k+1]['ecuac'][0])/np.sqrt(1+media_d_pendientes**2) for k in range(len(info_d_surcos)-1)])
         d_surco_metros=d_surco_metros*dist_b/dist_rec
