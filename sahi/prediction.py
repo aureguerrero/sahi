@@ -23,6 +23,16 @@ from sahi.utils.coco import CocoAnnotation, CocoPrediction
 from sahi.utils.cv import read_image_as_pil, visualize_object_predictions
 from sahi.utils.file import Path
 
+def mascara(object_prediction_list):
+  mask=np.zeros(object_prediction_list[0].mask.full_shape,dtype=bool)
+  for objeto in object_prediction_list:
+            mask1 = objeto.mask.bool_mask
+            mask[objeto.bbox.to_voc_bbox()[1]:objeto.bbox.to_voc_bbox()[1]+np.shape(mask1)[0],
+                     objeto.bbox.to_voc_bbox()[0]:objeto.bbox.to_voc_bbox()[0]+np.shape(mask1)[1]]=mask[objeto.bbox.to_voc_bbox()[1]:
+                                                                                                        objeto.bbox.to_voc_bbox()[1]+np.shape(mask1)[0],
+                                                                                                        objeto.bbox.to_voc_bbox()[0]:objeto.bbox.to_voc_bbox()[0]
+                                                                                                        +np.shape(mask1)[1]]+mask1
+  return mask*(objeto.category.id+1)
 
 def centroide(mask,shift_amount=[0,0]):
     if mask is not None:
@@ -316,16 +326,7 @@ class PredictionResult:
         self.object_prediction_list: List[ObjectPrediction] = object_prediction_list
         self.durations_in_seconds = durations_in_seconds
         self.centroides=[i.centroide() for i in object_prediction_list]
-        mask=np.zeros(self.image.size,dtype=np.uint8)
-#         for objeto in object_prediction_list:
-#             mask1 = objeto.mask.bool_mask*1#(objeto.category.id+1)
-#             mask[objeto.bbox.to_voc_bbox()[1]:objeto.bbox.to_voc_bbox()[1]+np.shape(mask1)[0],
-#                      objeto.bbox.to_voc_bbox()[0]:objeto.bbox.to_voc_bbox()[0]+np.shape(mask1)[1]]=mask[objeto.bbox.to_voc_bbox()[1]:
-#                                                                                                         objeto.bbox.to_voc_bbox()[1]+np.shape(mask1)[0],
-#                                                                                                         objeto.bbox.to_voc_bbox()[0]:objeto.bbox.to_voc_bbox()[0]
-#                                                                                                         +np.shape(mask1)[1]]+mask1
-#             mask[np.where(mask>0)]=objeto.category.id+1
-#         self.mascara=mask
+        self.mascara=mascara(List[ObjectPrediction])
 
        
        
