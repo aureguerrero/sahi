@@ -316,7 +316,7 @@ class PredictionResult:
         self.object_prediction_list: List[ObjectPrediction] = object_prediction_list
         self.durations_in_seconds = durations_in_seconds
         self.centroides=[i.centroide() for i in object_prediction_list]
-        mask=np.zeros((self.image.size,dtype=np.uint8)
+        mask=np.zeros(self.image.size,dtype=np.uint8)
         for objeto in object_prediction_list:
             mask1 = objeto.mask.bool_mask*1#(objeto.category.id+1)
             mask[objeto.bbox.to_voc_bbox()[1]:objeto.bbox.to_voc_bbox()[1]+np.shape(mask1)[0],
