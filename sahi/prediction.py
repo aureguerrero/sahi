@@ -589,7 +589,7 @@ class PredictionResult:
                          'stadist_dist_real':{'min':np.min(np.array(dist_real)), 'max':np.max(np.array(dist_real)),
                                          'promedio':np.mean(np.array(dist_real)),'desv_std':np.std(np.array(dist_real)),
                                          'CV':np.std(np.array(dist_real))/np.mean(np.array(dist_real))}})
-            id=id+1
+          id=id+1
             #---------------------------------------------
         resumen.append({'id':'total','plantas':[],'area':[],'distancias':[],'distancias_real':[],'stadist_area':{}, 'stadist_dist':{},'stadist_dist_real':{}})
         for i in range(len(lineas)):
