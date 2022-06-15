@@ -381,7 +381,7 @@ class PredictionResult:
         if clear is not None:
           self.object_prediction_list=[self.object_prediction_list[i] for i in range(len(self.object_prediction_list)) if i not in set(ptos_a_sacar)]
           self.centroides=[self.centroides[i] for i in range(len(self.centroides)) if i not in set(ptos_a_sacar)]
-        return [i['ecuac'] for i ininfo_d_surcos],info_d_surcos
+        return [i['ecuac'] for i in info_d_surcos],info_d_surcos
     
 #     def lineas(self, fft_threshold=0.93,nminppl=10,clear =None):
 #         image=self.mascaras().copy()*1
