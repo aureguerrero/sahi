@@ -326,7 +326,7 @@ class PredictionResult:
         self.object_prediction_list: List[ObjectPrediction] = object_prediction_list
         self.durations_in_seconds = durations_in_seconds
         self.centroides=[i.centroide() for i in object_prediction_list]
-        self.mascara=mascara(List[ObjectPrediction])
+        self.mascara=mascara(object_prediction_list)
 
        
        
