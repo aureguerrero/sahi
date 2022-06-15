@@ -8,7 +8,7 @@ import numpy as np
 from PIL import Image
 from osgeo import gdal, ogr
 import matplotlib.pyplot as plt
-from sklearn.linear_model import HuberRegressor
+from sklearn.linear_model import HuberRegressor, TheilSenRegressor, RANSACRegressor
 from sklearn.linear_model import TheilSenRegressor
 import os
 import PIL
