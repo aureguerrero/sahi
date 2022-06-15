@@ -316,6 +316,17 @@ class PredictionResult:
         self.object_prediction_list: List[ObjectPrediction] = object_prediction_list
         self.durations_in_seconds = durations_in_seconds
         self.centroides=[i.centroide() for i in object_prediction_list]
+        mask=np.zeros((self.image.size,dtype=np.uint8)
+        for objeto in object_prediction_list:
+            mask1 = objeto.mask.bool_mask*1#(objeto.category.id+1)
+            mask[objeto.bbox.to_voc_bbox()[1]:objeto.bbox.to_voc_bbox()[1]+np.shape(mask1)[0],
+                     objeto.bbox.to_voc_bbox()[0]:objeto.bbox.to_voc_bbox()[0]+np.shape(mask1)[1]]=mask[objeto.bbox.to_voc_bbox()[1]:
+                                                                                                        objeto.bbox.to_voc_bbox()[1]+np.shape(mask1)[0],
+                                                                                                        objeto.bbox.to_voc_bbox()[0]:objeto.bbox.to_voc_bbox()[0]
+                                                                                                        +np.shape(mask1)[1]]+mask1
+            mask[np.where(mask>0)]=objeto.category.id+1
+        self.mascara=mask
+
        
        
     def clases(self):
@@ -365,6 +376,8 @@ class PredictionResult:
           if len(ubic)>=nminppl:
             id_surco=id_surco+1
             datos=centros[ubic,:]
+            orden=[np.where(datos[:,0]==np.sort(datos[:,0])[i])[0][0] for i in range(len(ubic))]
+            ubic=ubic[orden]
             if rectas[0].coef[0]<0:
               media_altura=np.mean(np.array([np.max(self.object_prediction_list[l].mask.shape[1:2])/np.cos(np.arctan(rectas[0].coef[0])+np.pi/2) for l in ubic]))
             else:
