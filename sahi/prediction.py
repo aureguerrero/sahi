@@ -317,15 +317,15 @@ class PredictionResult:
         self.durations_in_seconds = durations_in_seconds
         self.centroides=[i.centroide() for i in object_prediction_list]
         mask=np.zeros(self.image.size,dtype=np.uint8)
-        for objeto in object_prediction_list:
-            mask1 = objeto.mask.bool_mask*1#(objeto.category.id+1)
-            mask[objeto.bbox.to_voc_bbox()[1]:objeto.bbox.to_voc_bbox()[1]+np.shape(mask1)[0],
-                     objeto.bbox.to_voc_bbox()[0]:objeto.bbox.to_voc_bbox()[0]+np.shape(mask1)[1]]=mask[objeto.bbox.to_voc_bbox()[1]:
-                                                                                                        objeto.bbox.to_voc_bbox()[1]+np.shape(mask1)[0],
-                                                                                                        objeto.bbox.to_voc_bbox()[0]:objeto.bbox.to_voc_bbox()[0]
-                                                                                                        +np.shape(mask1)[1]]+mask1
-            mask[np.where(mask>0)]=objeto.category.id+1
-        self.mascara=mask
+#         for objeto in object_prediction_list:
+#             mask1 = objeto.mask.bool_mask*1#(objeto.category.id+1)
+#             mask[objeto.bbox.to_voc_bbox()[1]:objeto.bbox.to_voc_bbox()[1]+np.shape(mask1)[0],
+#                      objeto.bbox.to_voc_bbox()[0]:objeto.bbox.to_voc_bbox()[0]+np.shape(mask1)[1]]=mask[objeto.bbox.to_voc_bbox()[1]:
+#                                                                                                         objeto.bbox.to_voc_bbox()[1]+np.shape(mask1)[0],
+#                                                                                                         objeto.bbox.to_voc_bbox()[0]:objeto.bbox.to_voc_bbox()[0]
+#                                                                                                         +np.shape(mask1)[1]]+mask1
+#             mask[np.where(mask>0)]=objeto.category.id+1
+#         self.mascara=mask
 
        
        
