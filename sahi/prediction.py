@@ -326,7 +326,7 @@ class PredictionResult:
         self.object_prediction_list: List[ObjectPrediction] = object_prediction_list
         self.durations_in_seconds = durations_in_seconds
         self.centroides=[i.centroide() for i in object_prediction_list]
-        self.mascara=mascara(object_prediction_list)
+#         self.mascara=mascara(self.object_prediction_list)
 
        
        
@@ -337,16 +337,16 @@ class PredictionResult:
         return clases
     
     def mascaras(self):
-        mask=np.zeros((self.image_height,self.image_width),dtype=np.uint8)
-        for objeto in self.object_prediction_list:
-            mask1 = objeto.mask.bool_mask*1#(objeto.category.id+1)
-            mask[objeto.bbox.to_voc_bbox()[1]:objeto.bbox.to_voc_bbox()[1]+np.shape(mask1)[0],
-                     objeto.bbox.to_voc_bbox()[0]:objeto.bbox.to_voc_bbox()[0]+np.shape(mask1)[1]]=mask[objeto.bbox.to_voc_bbox()[1]:
-                                                                                                        objeto.bbox.to_voc_bbox()[1]+np.shape(mask1)[0],
-                                                                                                        objeto.bbox.to_voc_bbox()[0]:objeto.bbox.to_voc_bbox()[0]
-                                                                                                        +np.shape(mask1)[1]]+mask1
-            mask[np.where(mask>0)]=objeto.category.id+1
-        return mask
+#         mask=np.zeros((self.image_height,self.image_width),dtype=np.uint8)
+#         for objeto in self.object_prediction_list:
+#             mask1 = objeto.mask.bool_mask*1#(objeto.category.id+1)
+#             mask[objeto.bbox.to_voc_bbox()[1]:objeto.bbox.to_voc_bbox()[1]+np.shape(mask1)[0],
+#                      objeto.bbox.to_voc_bbox()[0]:objeto.bbox.to_voc_bbox()[0]+np.shape(mask1)[1]]=mask[objeto.bbox.to_voc_bbox()[1]:
+#                                                                                                         objeto.bbox.to_voc_bbox()[1]+np.shape(mask1)[0],
+#                                                                                                         objeto.bbox.to_voc_bbox()[0]:objeto.bbox.to_voc_bbox()[0]
+#                                                                                                         +np.shape(mask1)[1]]+mask1
+#             mask[np.where(mask>0)]=objeto.category.id+1
+        return mascara(self.object_prediction_list)
     
     def lineas(self, fft_threshold=0.93,nminppl=10,clear =None):
         image=self.mascaras().copy()*1
