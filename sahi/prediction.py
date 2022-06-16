@@ -404,9 +404,9 @@ class PredictionResult:
         if len(ptos_a_sacar)>0:
           self.object_prediction_list=[self.object_prediction_list[i] for i in range(len(self.object_prediction_list)) if i not in set(ptos_a_sacar)]
           self.centroides=[self.centroides[i] for i in range(len(self.centroides)) if i not in set(ptos_a_sacar)]
-          for r in range(len(info_surcos)):
-            info_surcos[r]['ubic']=[info_surcos[r]['ubic'][l] for l in range(len(info_surcos[r]['ubic'])) if info_surcos[r]['ubic'][l] not in set(ptos_a_sacar)]
-            info_surcos[r]['ubic']=[info_surcos[r]['inliers'][l] for l in range(len(info_surcos[r]['ubic'])) if info_surcos[r]['ubic'][l] not in set(ptos_a_sacar)]
+          for r in range(len(info_d_surcos)):
+            info_d_surcos[r]['ubic']=[info_d_surcos[r]['ubic'][l] for l in range(len(info_d_surcos[r]['ubic'])) if info_d_surcos[r]['ubic'][l] not in set(ptos_a_sacar)]
+            info_d_surcos[r]['ubic']=[info_d_surcos[r]['inliers'][l] for l in range(len(info_d_surcos[r]['ubic'])) if info_d_surcos[r]['ubic'][l] not in set(ptos_a_sacar)]
         
     
         return [i['ecuac'] for i in info_d_surcos],info_d_surcos
