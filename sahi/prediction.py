@@ -407,7 +407,7 @@ class PredictionResult:
           for r in range(len(info_d_surcos)):
             info_d_surcos[r]['ubic']=[info_d_surcos[r]['ubic'][l] for l in range(len(info_d_surcos[r]['ubic'])) if info_d_surcos[r]['ubic'][l] not in set(ptos_a_sacar)]
             info_d_surcos[r]['ubic']=[info_d_surcos[r]['inliers'][l] for l in range(len(info_d_surcos[r]['ubic'])) if info_d_surcos[r]['ubic'][l] not in set(ptos_a_sacar)]
-        
+            info_d_surcos[r]['x_i_x_f']=[np.min(centros[info_d_surcos[r]['ubic'],0]),np.max(centros[info_d_surcos[r]['ubic'],0])]
     
         return [i['ecuac'] for i in info_d_surcos],info_d_surcos
     
