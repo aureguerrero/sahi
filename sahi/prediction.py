@@ -392,6 +392,11 @@ class PredictionResult:
               info_d_surcos[-1]['ubic']=[info_d_surcos[-1]['ubic'][u] for u in range(len(info_d_surcos[-1]['ubic'])) if info_d_surcos[-1]['inliers'][u]==True]
               info_d_surcos[-1]['inliers']=[info_d_surcos[-1]['inliers'][u] for u in range(len(info_d_surcos[-1]['inliers'])) if info_d_surcos[-1]['inliers'][u]==True]
               info_d_surcos[-1]['x_i_x_f']=[np.min(centros[info_d_surcos[-1]['ubic'],0]),np.max(centros[info_d_surcos[-1]['ubic'],0])]
+          else:
+            u=[p for p in range(len(self.object_prediction_list)) if p not in ubic]
+            self.centroides=[self.centroides[t] for t in u]
+            centros=centros[u]
+            self.object_prediction_list=[self.object_prediction_list[t] for t in u]
         if clear is not None:
           self.object_prediction_list=[self.object_prediction_list[i] for i in range(len(self.object_prediction_list)) if i not in set(ptos_a_sacar)]
           self.centroides=[self.centroides[i] for i in range(len(self.centroides)) if i not in set(ptos_a_sacar)]
@@ -541,7 +546,7 @@ class PredictionResult:
     def info(self,proporcion=0.5,d_surco_metros=0.52):
         lineas,info_d_surcos=self.lineas()
         centros=self.centroides
-        media_d_pendientes=np.mean([k['ecuac'][0] for k in info_d_surcos])
+        media_d_pendientes=np.mean([k['ecuac'][1] for k in info_d_surcos])
         dist_b=np.mean([np.abs(info_d_surcos[k]['ecuac'][0]-info_d_surcos[k+1]['ecuac'][0]) for k in range(len(info_d_surcos)-1)])
         dist_rec=np.mean([np.abs(info_d_surcos[k]['ecuac'][0]-info_d_surcos[k+1]['ecuac'][0])/np.sqrt(1+media_d_pendientes**2) for k in range(len(info_d_surcos)-1)])
         d_surco_metros=d_surco_metros*dist_b/dist_rec
