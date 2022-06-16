@@ -403,9 +403,11 @@ class PredictionResult:
 #           self.centroides=[self.centroides[i] for i in range(len(self.centroides)) if i not in set(ptos_a_sacar)]
         if len(ptos_a_sacar)>0:
           self.object_prediction_list=[self.object_prediction_list[i] for i in range(len(self.object_prediction_list)) if i not in set(ptos_a_sacar)]
+          centros=np.array([self.centroides[i] for i in range(len(self.centroides)) if i not in set(ptos_a_sacar)])
           self.centroides=[self.centroides[i] for i in range(len(self.centroides)) if i not in set(ptos_a_sacar)]
+          
           for r in range(len(info_d_surcos)):
-            info_d_surcos[r]['ubic']=[info_d_surcos[r]['ubic'][l] for l in range(len(info_d_surcos[r]['ubic'])) if info_d_surcos[r]['ubic'][l] not in set(ptos_a_sacar)]
+            info_d_surcos[r]['ubic']=np.where((centros[:,1]>info_d_surcos[r]['entre_rec'][0](centros[:,0]))*(centros[:,1]<info_d_surcos[r]['entre_rec'][1](centros[:,0]))==True)[0]
             info_d_surcos[r]['inliers']=[info_d_surcos[r]['inliers'][l] for l in range(len(info_d_surcos[r]['ubic'])) if info_d_surcos[r]['ubic'][l] not in set(ptos_a_sacar)]
             info_d_surcos[r]['x_i_x_f']=[np.min(centros[info_d_surcos[r]['ubic'],0]),np.max(centros[info_d_surcos[r]['ubic'],0])]
     
