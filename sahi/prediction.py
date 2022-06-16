@@ -549,7 +549,7 @@ class PredictionResult:
         
         
 #         comente1406
-#         rotacion=np.arctan(np.mean(np.array([lineas[i][1] for i in range(len(lineas))])))
+        rotacion=np.arctan(np.mean(np.array([lineas[i][1] for i in range(len(lineas))])))
 #         siembra=np.zeros((self.image_height,self.image_width),np.uint8)
 #         for i in range(len(lineas)):
 #             cv2.line(siembra,(0,int(lineas[i](0))),(self.image_width-1,int(lineas[i](self.image_width-1))),(255,255,255),2)
@@ -661,8 +661,8 @@ class PredictionResult:
 #                 cv2.circle(image, i, 7, (255, 255, 255), -1)
         if lineas is not None or lineas !=0:
            lineas,info_d_surcos=self.lineas()
-           for i in lineas:
-                cv2.line(image,(0,int(i(0))),(self.image_width-1,int(i(self.image_width-1))),(255,255,255),5)
+           for i in info_d_surcos:
+                cv2.line(image,(i[x_i_x_f'][0],int(i['ecuac'](i[x_i_x_f'][0]))),(i[x_i_x_f'][1],int(i['ecuac'](i[x_i_x_f'][1]))),(255,255,255),5)
                 
         if etiqueta is not None or etiqueta !=0:
             rect_th = rect_th or max(round(sum(image.shape) / 2 * 0.001), 1)
