@@ -386,20 +386,29 @@ class PredictionResult:
             theilsen=RANSACRegressor(residual_threshold=0.6*media_altura).fit(np.expand_dims(datos[:,0],axis=1),datos[:,1])
             info_d_surcos.append({'entre_rec':[rectas[i],rectas[i+1]],'ubic': ubic,'ecuac':np.poly1d([theilsen.estimator_.coef_[0],theilsen.estimator_.intercept_]),'x_i_x_f':[np.min(centros[ubic,0]),np.max(centros[ubic,0])],'inliers': theilsen.inlier_mask_})
             for t in range(len(info_d_surcos[-1]['inliers'])):
-              if info_d_surcos[-1]['inliers'][t]==False:
+              if info_d_surcos[-1]['inliers'][t]==False and clear is not None:
                 ptos_a_sacar.append(info_d_surcos[-1]['ubic'][t])
-            if clear is not None:
-              info_d_surcos[-1]['ubic']=[info_d_surcos[-1]['ubic'][u] for u in range(len(info_d_surcos[-1]['ubic'])) if info_d_surcos[-1]['inliers'][u]==True]
-              info_d_surcos[-1]['inliers']=[info_d_surcos[-1]['inliers'][u] for u in range(len(info_d_surcos[-1]['inliers'])) if info_d_surcos[-1]['inliers'][u]==True]
-              info_d_surcos[-1]['x_i_x_f']=[np.min(centros[info_d_surcos[-1]['ubic'],0]),np.max(centros[info_d_surcos[-1]['ubic'],0])]
+#             if clear is not None:
+#               info_d_surcos[-1]['ubic']=[info_d_surcos[-1]['ubic'][u] for u in range(len(info_d_surcos[-1]['ubic'])) if info_d_surcos[-1]['inliers'][u]==True]
+#               info_d_surcos[-1]['inliers']=[info_d_surcos[-1]['inliers'][u] for u in range(len(info_d_surcos[-1]['inliers'])) if info_d_surcos[-1]['inliers'][u]==True]
+#               info_d_surcos[-1]['x_i_x_f']=[np.min(centros[info_d_surcos[-1]['ubic'],0]),np.max(centros[info_d_surcos[-1]['ubic'],0])]
           else:
-            u=[p for p in range(len(self.object_prediction_list)) if p not in ubic]
-            self.centroides=[self.centroides[t] for t in u]
-            centros=centros[u]
-            self.object_prediction_list=[self.object_prediction_list[t] for t in u]
-        if clear is not None:
+              ptos_a_sacar.extend(ubic)
+#             u=[p for p in range(len(self.object_prediction_list)) if p not in ubic]
+#             self.centroides=[self.centroides[t] for t in u]
+#             centros=centros[u]
+#             self.object_prediction_list=[self.object_prediction_list[t] for t in u]
+#         if clear is not None:
+#           self.object_prediction_list=[self.object_prediction_list[i] for i in range(len(self.object_prediction_list)) if i not in set(ptos_a_sacar)]
+#           self.centroides=[self.centroides[i] for i in range(len(self.centroides)) if i not in set(ptos_a_sacar)]
+        if len(ptos_a_sacar)>0:
           self.object_prediction_list=[self.object_prediction_list[i] for i in range(len(self.object_prediction_list)) if i not in set(ptos_a_sacar)]
           self.centroides=[self.centroides[i] for i in range(len(self.centroides)) if i not in set(ptos_a_sacar)]
+          for r in range(len(info_surcos)):
+            info_surcos[r]['ubic']=[info_surcos[r]['ubic'][l] for l in range(len(info_surcos[r]['ubic'])) if info_surcos[r]['ubic'][l] not in set(ptos_a_sacar)]
+            info_surcos[r]['ubic']=[info_surcos[r]['inliers'][l] for l in range(len(info_surcos[r]['ubic'])) if info_surcos[r]['ubic'][l] not in set(ptos_a_sacar)]
+        
+    
         return [i['ecuac'] for i in info_d_surcos],info_d_surcos
     
 #     def lineas(self, fft_threshold=0.93,nminppl=10,clear =None):
