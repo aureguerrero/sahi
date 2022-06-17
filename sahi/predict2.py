@@ -6,6 +6,7 @@ import os
 import time
 import torch
 import warnings
+from sklearn.cluster import KMeans
 from typing import Dict, List, Optional
 
 import numpy as np
@@ -288,7 +289,7 @@ def get_sliced_prediction(
         tqdm.write(f"Performing prediction on {num_slices} number of slices.")
     object_prediction_list = []
     # perform sliced prediction
-    for group_ind in range(num_group):
+    for group_ind in tqdm(range(num_group)):
         # prepare batch (currently supports only 1 batch)
         image_list = []
         shift_amount_list = []
@@ -307,59 +308,91 @@ def get_sliced_prediction(
             ],
         )
         object_prediction_list.extend(prediction_result.object_prediction_list)
-    mask=np.zeros((object_prediction_list[0].mask.full_shape_height,
-                   object_prediction_list[0].mask.full_shape_width),dtype=np.uint8)
-    for objeto in object_prediction_list:
-        mask1 = objeto.mask.bool_mask*1
-        mask[objeto.bbox.to_voc_bbox()[1]:objeto.bbox.to_voc_bbox()[1]+np.shape(mask1)[0],
-             objeto.bbox.to_voc_bbox()[0]:objeto.bbox.to_voc_bbox()[0]+np.shape(mask1)[1]]= mask[objeto.bbox.to_voc_bbox()[1]:
-                                                                                                objeto.bbox.to_voc_bbox()[1]+np.shape(mask1)[0],
-                                                                                                objeto.bbox.to_voc_bbox()[0]:
-                                                                                                objeto.bbox.to_voc_bbox()[0]+np.shape(mask1)[1]]+mask1
-    mask[np.where(mask>0)]=objeto.category.id+1
     
-    transf = np.fft.fft2(mask-np.mean(mask))
-    transf_abs = np.abs(transf)
-    transf_max = transf_abs.max()
-    transf_abs[transf_abs<transf_max*0.93]=0
-    ifft = np.fft.ifft2(transf_abs*transf)
-    ifft = (ifft / np.max(ifft))+1
-    img_lines_aux = np.abs(ifft)
-    img_lines_aux_norm=img_lines_aux/img_lines_aux.max()
-    img_lines = np.zeros_like(img_lines_aux_norm)
-    img_lines [ img_lines_aux_norm < 0.2] = 1
-    lineas_entre_siembra = skeletonize(img_lines)
-    extrem_izq=np.percentile(np.where(lineas_entre_siembra==True)[1],5)
-    extrem_derec=np.percentile(np.where(lineas_entre_siembra==True)[1],95)
-    lineas2=np.max(np.array([np.where(lineas_entre_siembra[:,int(extrem_izq)]==True),np.where(lineas_entre_siembra[:,int(extrem_derec)]==True)]).squeeze(),axis=0)
-    lineas2=list(lineas2)
-    if lineas2[-1]<np.shape(mask)[0]:
-      lineas2.append(np.shape(mask)[0])
-    if lineas2[0]>0:
-      lineas2.insert(0,0)
-    
-    limites=[[lineas2[i],lineas2[i+1]] for i in range(len(lineas2)-1)]
-    ima=read_image_as_pil(image)
-    imag_surc=[np.array(ima)[i[0]:i[1],:,:] for i in limites]
-    object_prediction_list=[]
-    for l in range(len(imag_surc)):
-        slice_s=slice_image(imag_surc[l],slice_height=
-                            int(np.max([slice_height,limites[l][1]-limites[0][1]+1])),slice_width=slice_width,
-                    overlap_height_ratio=overlap_height_ratio,overlap_width_ratio=overlap_width_ratio,)
-        for t in range(len(slice_s.starting_pixels)):
-            slice_s.starting_pixels[t][1]=limites[l][0]
-            prediction_result = get_prediction(
-                image=slice_s.images[t],
-                detection_model=detection_model,
-                image_size=image_size,
-                shift_amount=slice_s.starting_pixels[t],
-                full_shape=[
-                    slice_image_result.original_image_height,
-                    slice_image_result.original_image_width,
-                ],
-            )
-            object_prediction_list.extend(prediction_result.object_prediction_list)
+#     Agregado160622
+    result=PredictionResult(
+        image=image, object_prediction_list=object_prediction_list, durations_in_seconds=durations_in_seconds
+    )
+    lineas, info_d_surcos=result.lineas()
+    ima=np.array(result.image)
+    dist_b=np.mean([np.abs(info_d_surcos[k]['ecuac'][0]-info_d_surcos[k+1]['ecuac'][0]) for k in range(len(info_d_surcos)-1)])
+    print('refinando estimación')
+    for r in tqdm(range(len(info_d_surcos))):
+      n=(info_d_surcos[r]['x_i_x_f'][1]-info_d_surcos[r]['x_i_x_f'][0])//np.ceil(0.375*slice_width)
+      centrox=np.array(result.centroides)[info_d_surcos[r]['ubic'],:]
+      kmeans = KMeans(n_clusters=int(n)).fit(centrox)
+      centro_imagen=np.ceil(kmeans.cluster_centers_).astype(int)
+      tam_v=int(np.abs(info_d_surcos[r]['ecuac'](255)-info_d_surcos[r]['ecuac'](0))+dist_b)
+      for c in range(len(centro_imagen)):
 
+        shift_amount=[np.max([centro_imagen[r][0]-tam_v,0]),np.max([centro_imagen[r][1]-tam_v,0])]
+        prediction_result = get_prediction(
+            image=ima[shift_amount[1]:min([centro_imagen[r][1]+tam_v,slice_image_result.original_image_height]),
+                      shift_amount[0]:min([centro_imagen[r][0]+tam_v,slice_image_result.original_image_height])],
+            detection_model=detection_model,
+            image_size=image_size,
+            shift_amount=shift_amount,
+            full_shape=[
+                slice_image_result.original_image_height,
+                slice_image_result.original_image_width,
+            ],
+        )
+        object_prediction_list.extend(prediction_result.object_prediction_list)
+    
+# 160622----------------------------------------------------------------------------------------------
+#     mask=np.zeros((object_prediction_list[0].mask.full_shape_height,
+#                    object_prediction_list[0].mask.full_shape_width),dtype=np.uint8)
+#     for objeto in object_prediction_list:
+#         mask1 = objeto.mask.bool_mask*1
+#         mask[objeto.bbox.to_voc_bbox()[1]:objeto.bbox.to_voc_bbox()[1]+np.shape(mask1)[0],
+#              objeto.bbox.to_voc_bbox()[0]:objeto.bbox.to_voc_bbox()[0]+np.shape(mask1)[1]]= mask[objeto.bbox.to_voc_bbox()[1]:
+#                                                                                                 objeto.bbox.to_voc_bbox()[1]+np.shape(mask1)[0],
+#                                                                                                 objeto.bbox.to_voc_bbox()[0]:
+#                                                                                                 objeto.bbox.to_voc_bbox()[0]+np.shape(mask1)[1]]+mask1
+#     mask[np.where(mask>0)]=objeto.category.id+1
+    
+#     transf = np.fft.fft2(mask-np.mean(mask))
+#     transf_abs = np.abs(transf)
+#     transf_max = transf_abs.max()
+#     transf_abs[transf_abs<transf_max*0.93]=0
+#     ifft = np.fft.ifft2(transf_abs*transf)
+#     ifft = (ifft / np.max(ifft))+1
+#     img_lines_aux = np.abs(ifft)
+#     img_lines_aux_norm=img_lines_aux/img_lines_aux.max()
+#     img_lines = np.zeros_like(img_lines_aux_norm)
+#     img_lines [ img_lines_aux_norm < 0.2] = 1
+#     lineas_entre_siembra = skeletonize(img_lines)
+#     extrem_izq=np.percentile(np.where(lineas_entre_siembra==True)[1],5)
+#     extrem_derec=np.percentile(np.where(lineas_entre_siembra==True)[1],95)
+#     lineas2=np.max(np.array([np.where(lineas_entre_siembra[:,int(extrem_izq)]==True),np.where(lineas_entre_siembra[:,int(extrem_derec)]==True)]).squeeze(),axis=0)
+#     lineas2=list(lineas2)
+#     if lineas2[-1]<np.shape(mask)[0]:
+#       lineas2.append(np.shape(mask)[0])
+#     if lineas2[0]>0:
+#       lineas2.insert(0,0)
+    
+#     limites=[[lineas2[i],lineas2[i+1]] for i in range(len(lineas2)-1)]
+#     ima=read_image_as_pil(image)
+#     imag_surc=[np.array(ima)[i[0]:i[1],:,:] for i in limites]
+#     object_prediction_list=[]
+#     for l in range(len(imag_surc)):
+#         slice_s=slice_image(imag_surc[l],slice_height=
+#                             int(np.max([slice_height,limites[l][1]-limites[0][1]+1])),slice_width=slice_width,
+#                     overlap_height_ratio=overlap_height_ratio,overlap_width_ratio=overlap_width_ratio,)
+#         for t in range(len(slice_s.starting_pixels)):
+#             slice_s.starting_pixels[t][1]=limites[l][0]
+#             prediction_result = get_prediction(
+#                 image=slice_s.images[t],
+#                 detection_model=detection_model,
+#                 image_size=image_size,
+#                 shift_amount=slice_s.starting_pixels[t],
+#                 full_shape=[
+#                     slice_image_result.original_image_height,
+#                     slice_image_result.original_image_width,
+#                 ],
+#             )
+#             object_prediction_list.extend(prediction_result.object_prediction_list)
+# 160622----------------------------------------------------------------------------------------------
     print(len(object_prediction_list))
                 
     # perform standard prediction
