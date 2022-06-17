@@ -308,7 +308,7 @@ def get_sliced_prediction(
             ],
         )
         object_prediction_list.extend(prediction_result.object_prediction_list)
-    
+    print(len(object_prediction_list))
 #     Agregado160622
     result=PredictionResult(
         image=image, object_prediction_list=object_prediction_list, durations_in_seconds=durations_in_seconds
@@ -322,13 +322,13 @@ def get_sliced_prediction(
       centrox=np.array(result.centroides)[info_d_surcos[r]['ubic'],:]
       kmeans = KMeans(n_clusters=int(n)).fit(centrox)
       centro_imagen=np.ceil(kmeans.cluster_centers_).astype(int)
-      tam_v=int(np.abs(info_d_surcos[r]['ecuac'](slice_width/2)-info_d_surcos[r]['ecuac'](0))+dist_b)
+      tam_v=int(0.9*(np.abs(info_d_surcos[r]['ecuac'](slice_width/2)-info_d_surcos[r]['ecuac'](0))+dist_b))
       for c in range(len(centro_imagen)):
 
-        shift_amount=[np.max([centro_imagen[r][0]-int(slice_width//2),0]),np.max([centro_imagen[r][1]-tam_v,0])]
+        shift_amount=[np.max([centro_imagen[c][0]-int(slice_width//2),0]),np.max([centro_imagen[c][1]-tam_v,0])]
         prediction_result = get_prediction(
-            image=ima[shift_amount[1]:min([centro_imagen[r][1]+tam_v,slice_image_result.original_image_height]),
-                      shift_amount[0]:min([centro_imagen[r][0]+int(slice_width//2),slice_image_result.original_image_height])],
+            image=ima[shift_amount[1]:min([centro_imagen[c][1]+tam_v,slice_image_result.original_image_height]),
+                      shift_amount[0]:min([centro_imagen[c][0]+int(slice_width//2),slice_image_result.original_image_height])],
             detection_model=detection_model,
             image_size=image_size,
             shift_amount=shift_amount,
