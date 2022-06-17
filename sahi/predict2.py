@@ -317,18 +317,19 @@ def get_sliced_prediction(
     ima=np.array(result.image)
     dist_b=np.mean([np.abs(info_d_surcos[k]['ecuac'][0]-info_d_surcos[k+1]['ecuac'][0]) for k in range(len(info_d_surcos)-1)])
     print('refinando estimación')
-    for r in tqdm(range(len(info_d_surcos))):
-      n=(info_d_surcos[r]['x_i_x_f'][1]-info_d_surcos[r]['x_i_x_f'][0])//np.ceil(0.375*slice_width)
+    for r in range(len(info_d_surcos)):
+      print(str(r+1)+'/'+str(len(info_d_surcos)))
+      n=(info_d_surcos[r]['x_i_x_f'][1]-info_d_surcos[r]['x_i_x_f'][0])//np.ceil((1-overlap_width_ratio)*slice_width)
       centrox=np.array(result.centroides)[info_d_surcos[r]['ubic'],:]
       kmeans = KMeans(n_clusters=int(n)).fit(centrox)
       centro_imagen=np.ceil(kmeans.cluster_centers_).astype(int)
       tam_v=int(0.9*(np.abs(info_d_surcos[r]['ecuac'](slice_width/2)-info_d_surcos[r]['ecuac'](0))+dist_b))
-      for c in range(len(centro_imagen)):
+      for c in tqdm(range(len(centro_imagen))):
 
         shift_amount=[np.max([centro_imagen[c][0]-int(slice_width//2),0]),np.max([centro_imagen[c][1]-tam_v,0])]
         prediction_result = get_prediction(
-            image=ima[shift_amount[1]:min([centro_imagen[c][1]+tam_v,slice_image_result.original_image_height]),
-                      shift_amount[0]:min([centro_imagen[c][0]+int(slice_width//2),slice_image_result.original_image_height])],
+            image=ima[shift_amount[1]:min([centro_imagen[c][1]+tam_v,slice_image_result.original_image_height-1]),
+                      shift_amount[0]:min([centro_imagen[c][0]+int(slice_width//2),slice_image_result.original_image_width-1])],
             detection_model=detection_model,
             image_size=image_size,
             shift_amount=shift_amount,
@@ -338,7 +339,7 @@ def get_sliced_prediction(
             ],
         )
         object_prediction_list.extend(prediction_result.object_prediction_list)
-    del result
+    del result, ima
     
 # 160622----------------------------------------------------------------------------------------------
 #     mask=np.zeros((object_prediction_list[0].mask.full_shape_height,
