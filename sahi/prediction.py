@@ -351,7 +351,7 @@ class PredictionResult:
 #             mask[np.where(mask>0)]=objeto.category.id+1
         return mascara(self.object_prediction_list)
     
-    def lineas(self, fft_threshold=0.93,nminppl=10,clear =None, cota_transf=0.2):
+    def lineas(self, fft_threshold=0.93,nminppl=10,clear =None, cota_transf=0.2,cambio=1):
         image=self.mascaras().copy()*1
         centros=np.array(self.centroides.copy())
         transf = np.fft.fft2(image-np.mean(image))
@@ -404,7 +404,7 @@ class PredictionResult:
 #         if clear is not None:
 #           self.object_prediction_list=[self.object_prediction_list[i] for i in range(len(self.object_prediction_list)) if i not in set(ptos_a_sacar)]
 #           self.centroides=[self.centroides[i] for i in range(len(self.centroides)) if i not in set(ptos_a_sacar)]
-        if len(ptos_a_sacar)>0:
+        if len(ptos_a_sacar)>0 and cambio==1:
           self.object_prediction_list=[self.object_prediction_list[i] for i in range(len(self.object_prediction_list)) if i not in set(ptos_a_sacar)]
           centros=np.array([self.centroides[i] for i in range(len(self.centroides)) if i not in set(ptos_a_sacar)])
           self.centroides=[self.centroides[i] for i in range(len(self.centroides)) if i not in set(ptos_a_sacar)]
