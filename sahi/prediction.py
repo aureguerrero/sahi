@@ -44,14 +44,17 @@ def centroide(mask,shift_amount=[0,0]):
         return [c[1]+shift_amount[0],c[0]+shift_amount[1]]
 
     
-def ecua_lineas_d_surco(lineas_entre_siembra,t=0.01):
+def ecua_lineas_d_surco(lineas_entre_siembra,t=0.015):
+  pto_ini=np.array(np.where(lineas_entre_siembra))
   lineas = cv2.HoughLines(lineas_entre_siembra[int(0.125*lineas_entre_siembra.shape[0]):
   -int(0.125*lineas_entre_siembra.shape[0]),int(0.125*lineas_entre_siembra.shape[1]):
   -int(0.125*lineas_entre_siembra.shape[0])], 1, np.pi/720, 100)
   angulo=np.mean(lineas.squeeze(),axis=0)[1]-np.pi/2
   if np.tan(angulo)<=0:
-    x0, y0  = int(t*lineas_entre_siembra.shape[1]), int((1-t)*(lineas_entre_siembra.shape[0]-1))
+    x0, y0  = int(np.min(pto_ini[1,:])+t*lineas_entre_siembra.shape[1]),np.max(pto_ini[0,:])- int(t*(lineas_entre_siembra.shape[0]-1))
     y_x0=np.where(lineas_entre_siembra[:,x0]>0)[0]
+    entrox=0
+    entroy=0
     med_d_y_x0=np.mean([y_x0[i+1]-y_x0[i] for i in range(len(y_x0)-1)])
     if len(y_x0)>1:
       med_d_y_x0=np.mean([y_x0[i+1]-y_x0[i] for i in range(len(y_x0)-1)])
@@ -103,7 +106,7 @@ def ecua_lineas_d_surco(lineas_entre_siembra,t=0.01):
 
 
   else:
-    x0, y0  = int(t*(lineas_entre_siembra.shape[1]-1)), int(t*(lineas_entre_siembra.shape[0]-1))
+    x0, y0  = int(np.min(pto_ini[1,:])+t*(lineas_entre_siembra.shape[1]-1)), int(np.min(pto_ini[0,:])+t*(lineas_entre_siembra.shape[0]-1))
     x_y0=np.where(lineas_entre_siembra[y0,:]>0)[0][::-1]
     #med_d_x_y0=np.mean([x_y0[i]-x_y0[i+1] for i in range(len(x_y0)-1)])
     entrox=0
@@ -348,7 +351,7 @@ class PredictionResult:
 #             mask[np.where(mask>0)]=objeto.category.id+1
         return mascara(self.object_prediction_list)
     
-    def lineas(self, fft_threshold=0.93,nminppl=10,clear =None):
+    def lineas(self, fft_threshold=0.93,nminppl=10,clear =None, cota_transf=0.2):
         image=self.mascaras().copy()*1
         centros=np.array(self.centroides.copy())
         transf = np.fft.fft2(image-np.mean(image))
@@ -361,10 +364,10 @@ class PredictionResult:
         img_lines_aux = np.abs(ifft)
         img_lines_aux_norm=img_lines_aux/img_lines_aux.max()
         img_lines = np.zeros_like(img_lines_aux_norm)
-        img_lines [ img_lines_aux_norm < 0.2] = 1
+        img_lines [ img_lines_aux_norm < cota_transf] = 1
         lineas_entre_siembra = skeletonize(img_lines)
         lineas_entre_siembra.dtype=np.uint8
-        rectas,ptos_ini=ecua_lineas_d_surco(lineas_entre_siembra,t=0.02)
+        rectas,ptos_ini=ecua_lineas_d_surco(lineas_entre_siembra)
         lineas_d_surcos=[]
         object_prediction_list=[]
         centro2=[]
