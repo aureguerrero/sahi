@@ -9,7 +9,7 @@ from PIL import Image
 from osgeo import gdal, ogr
 import matplotlib.pyplot as plt
 from sklearn.linear_model import HuberRegressor, TheilSenRegressor, RANSACRegressor
-from sklearn.linear_model import TheilSenRegressor
+
 import os
 import PIL
 import cv2
@@ -669,7 +669,7 @@ class PredictionResult:
         rgb_mask = np.stack([r, g, b], axis=2)
         image = cv2.addWeighted(image, 1, rgb_mask, 0.4, 0)
         
-        if centro is not None or centro !=0:
+        if centro is not None and centro !=0:
             centro=self.centroides
             ptos=np.zeros_like(image,dtype=np.uint8)
             centro=np.array(centro)
@@ -678,12 +678,12 @@ class PredictionResult:
             image = cv2.addWeighted(image, 1, cv2.dilate(ptos,kernel,iterations = 1), 0.8, 0)
 #             for i in centro:
 #                 cv2.circle(image, i, 7, (255, 255, 255), -1)
-        if lineas is not None or lineas !=0:
+        if lineas is not None and lineas !=0:
            lineas,info_d_surcos=self.lineas()
            for i in info_d_surcos:
                 cv2.line(image,(i['x_i_x_f'][0],int(i['ecuac'](i['x_i_x_f'][0]))),(i['x_i_x_f'][1],int(i['ecuac'](i['x_i_x_f'][1]))),(255,255,255),5)
                 
-        if etiqueta is not None or etiqueta !=0:
+        if etiqueta is not None and etiqueta !=0:
             rect_th = rect_th or max(round(sum(image.shape) / 2 * 0.001), 1)
             # set text_th for category names
             text_th = text_th or max(rect_th - 1, 1)
