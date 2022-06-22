@@ -721,10 +721,10 @@ class PredictionResult:
                     thickness=text_th,
                 )
             
-            if export_dir:
-                # save inference result
-                save_path = os.path.join(export_dir, export_file + "." + export_format)
-                cv2.imwrite(save_path, cv2.cvtColor(image, cv2.COLOR_RGB2BGR))
+        if export_dir:
+            # save inference result
+            save_path = os.path.join(export_dir, export_file + "." + export_format)
+            cv2.imwrite(save_path, cv2.cvtColor(image, cv2.COLOR_RGB2BGR))
 
             
 #         visualize_object_predictions(
