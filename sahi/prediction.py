@@ -389,7 +389,7 @@ class PredictionResult:
             theilsen=RANSACRegressor(residual_threshold=0.6*media_altura).fit(np.expand_dims(datos[:,0],axis=1),datos[:,1])
             info_d_surcos.append({'entre_rec':[rectas[i],rectas[i+1]],'ubic': ubic,'ecuac':np.poly1d([theilsen.estimator_.coef_[0],theilsen.estimator_.intercept_]),'x_i_x_f':[np.min(centros[ubic,0]),np.max(centros[ubic,0])],'inliers': theilsen.inlier_mask_})
             for t in range(len(info_d_surcos[-1]['inliers'])):
-              if info_d_surcos[-1]['inliers'][t]==False and clear is not None:
+              if (info_d_surcos[-1]['inliers'][t]==False or(np.abs(info_d_surcos[-1]['ecuac'](datos[t,0])-datos[t,1])/np.sqrt(1+theilsen.estimator_.coef_[0]**2)>0.5*media_altura)) and clear is not None:
                 ptos_a_sacar.append(info_d_surcos[-1]['ubic'][t])
 #             if clear is not None:
 #               info_d_surcos[-1]['ubic']=[info_d_surcos[-1]['ubic'][u] for u in range(len(info_d_surcos[-1]['ubic'])) if info_d_surcos[-1]['inliers'][u]==True]
