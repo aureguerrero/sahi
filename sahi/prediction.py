@@ -681,7 +681,7 @@ class PredictionResult:
         if lineas is not None and lineas !=0:
            lineas,info_d_surcos=self.lineas()
            for i in info_d_surcos:
-                cv2.line(image,(i['x_i_x_f'][0],int(i['ecuac'](i['x_i_x_f'][0]))),(i['x_i_x_f'][1],int(i['ecuac'](i['x_i_x_f'][1]))),(255,255,255),5)
+                cv2.line(image,(i['x_i_x_f'][0],int(i['ecuac'](i['x_i_x_f'][0]))),(i['x_i_x_f'][1],int(i['ecuac'](i['x_i_x_f'][1]))),(255,255,255),3)
                 
         if etiqueta is not None and etiqueta !=0:
             rect_th = rect_th or max(round(sum(image.shape) / 2 * 0.001), 1)
