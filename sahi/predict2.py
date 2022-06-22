@@ -319,7 +319,8 @@ def get_sliced_prediction(
     print('refinando estimación')
     for r in range(len(info_d_surcos)):
       print(str(r+1)+'/'+str(len(info_d_surcos)))
-      n=(info_d_surcos[r]['x_i_x_f'][1]-info_d_surcos[r]['x_i_x_f'][0])//np.ceil((1-overlap_width_ratio)*slice_width)
+      n=np.max([(info_d_surcos[r]['x_i_x_f'][1]-info_d_surcos[r]['x_i_x_f'][0])//np.ceil((1-overlap_width_ratio)*slice_width),1])
+      
       centrox=np.array(result.centroides)[info_d_surcos[r]['ubic'],:]
       kmeans = KMeans(n_clusters=np.min([int(n),len(centrox)])).fit(centrox)
       centro_imagen=np.ceil(kmeans.cluster_centers_).astype(int)
