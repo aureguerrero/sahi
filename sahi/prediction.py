@@ -413,6 +413,7 @@ class PredictionResult:
           
             for r in range(len(info_d_surcos)):
               info_d_surcos[r]['ubic']=np.where((centros[:,1]>info_d_surcos[r]['entre_rec'][0](centros[:,0]))*(centros[:,1]<info_d_surcos[r]['entre_rec'][1](centros[:,0]))==True)[0]
+              datos=centros[info_d_surcos[r]['ubic'],:]
               orden=[np.where(datos[:,0]==np.sort(datos[:,0])[i])[0][0] for i in range(len(info_d_surcos[r]['ubic']))]
               info_d_surcos[r]['ubic']=info_d_surcos[r]['ubic'][orden]
               datos=centros[info_d_surcos[r]['ubic'],:]
