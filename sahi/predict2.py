@@ -324,7 +324,7 @@ def get_sliced_prediction(
       centrox=np.array(result.centroides)[info_d_surcos[r]['ubic'],:]
       kmeans = KMeans(n_clusters=np.min([int(n),len(centrox)])).fit(centrox)
       centro_imagen=np.ceil(kmeans.cluster_centers_).astype(int)
-      tam_v=int(0.9*(np.abs(info_d_surcos[r]['ecuac'](info_d_surcos[r]['x_y_x_f'][0]+slice_width/2)-info_d_surcos[r]['ecuac'](info_d_surcos[r]['x_y_x_f'][0]))+dist_b))
+      tam_v=int(0.9*(np.abs(info_d_surcos[r]['ecuac'](info_d_surcos[r]['x_i_x_f'][0]+slice_width/2)-info_d_surcos[r]['ecuac'](info_d_surcos[r]['x_i_x_f'][0]))+dist_b))
       for c in tqdm(range(len(centro_imagen))):
 
         shift_amount=[np.max([centro_imagen[c][0]-int(slice_width//2),0]),np.max([centro_imagen[c][1]-tam_v,0])]
