@@ -220,24 +220,24 @@ def get_sliced_prediction(
     # currently only 1 batch supported
     num_batch = 1
 
-    # create slices from full image
+#     create slices from full image
     time_start = time.time()
-    # slice_image_result = slice_image(
-    #     image=image,
-    #     slice_height=slice_height,
-    #     slice_width=slice_width,
-    #     overlap_height_ratio=overlap_height_ratio,
-    #     overlap_width_ratio=overlap_width_ratio,
-    # )
-    # num_slices = len(slice_image_result)
-    #------------------------------------------incorporado------------------------
     slice_image_result = slice_image(
         image=image,
-        slice_height=2*slice_height,
-        slice_width=2*slice_width,
-        overlap_height_ratio=0,
-        overlap_width_ratio=0,
+        slice_height=slice_height,
+        slice_width=slice_width,
+        overlap_height_ratio=overlap_height_ratio,
+        overlap_width_ratio=overlap_width_ratio,
     )
+    num_slices = len(slice_image_result)
+    #------------------------------------------incorporado------------------------
+#     slice_image_result = slice_image(
+#         image=image,
+#         slice_height=2*slice_height,
+#         slice_width=2*slice_width,
+#         overlap_height_ratio=0,
+#         overlap_width_ratio=0,
+#     )
     #-----------------------------------------------------------------------------
     num_slices = len(slice_image_result)
     
