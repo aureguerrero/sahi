@@ -314,32 +314,37 @@ def get_sliced_prediction(
         image=image, object_prediction_list=object_prediction_list, durations_in_seconds=durations_in_seconds
     )
     lineas, info_d_surcos=result.lineas()
-    ima=np.array(result.image)
-    dist_b=np.mean([np.abs(info_d_surcos[k]['ecuac'][0]-info_d_surcos[k+1]['ecuac'][0]) for k in range(len(info_d_surcos)-1)])
-    print('refinando estimación')
-    for r in range(len(info_d_surcos)):
-      print(str(r+1)+'/'+str(len(info_d_surcos)))
-      n=np.max([(info_d_surcos[r]['x_i_x_f'][1]-info_d_surcos[r]['x_i_x_f'][0])//np.ceil((1-overlap_width_ratio)*slice_width),1])
-      
-      centrox=np.array(result.centroides)[info_d_surcos[r]['ubic'],:]
-      kmeans = KMeans(n_clusters=np.min([int(n),len(centrox)])).fit(centrox)
-      centro_imagen=np.ceil(kmeans.cluster_centers_).astype(int)
-      tam_v=np.min([ima.shape[0]-1,ima.shape[1]-1,int(0.9*(np.abs(info_d_surcos[r]['ecuac'](info_d_surcos[r]['x_i_x_f'][0]+slice_width/2)-info_d_surcos[r]['ecuac'](info_d_surcos[r]['x_i_x_f'][0]))+dist_b))])
-      for c in tqdm(range(len(centro_imagen))):
+    if len(info_d_surcos)>0:
+        ima=np.array(result.image)
+        if len(info_d_surcos)>1:
+            dist_b=np.mean([np.abs(info_d_surcos[k]['ecuac'][0]-info_d_surcos[k+1]['ecuac'][0]) for k in range(len(info_d_surcos)-1)])
+        else:
+            dist_b=np.abs(info_d_surcos[0]['ecuac'][0])
 
-        shift_amount=[np.max([centro_imagen[c][0]-int(slice_width//2),0]),np.max([centro_imagen[c][1]-tam_v,0])]
-        prediction_result = get_prediction(
-            image=ima[shift_amount[1]:min([centro_imagen[c][1]+tam_v,slice_image_result.original_image_height-1]),
-                      shift_amount[0]:min([centro_imagen[c][0]+int(slice_width//2),slice_image_result.original_image_width-1])],
-            detection_model=detection_model,
-            image_size=image_size,
-            shift_amount=shift_amount,
-            full_shape=[
-                slice_image_result.original_image_height,
-                slice_image_result.original_image_width,
-            ],
-        )
-        object_prediction_list.extend(prediction_result.object_prediction_list)
+        print('refinando estimación')
+        for r in range(len(info_d_surcos)):
+          print(str(r+1)+'/'+str(len(info_d_surcos)))
+          n=np.max([(info_d_surcos[r]['x_i_x_f'][1]-info_d_surcos[r]['x_i_x_f'][0])//np.ceil((1-overlap_width_ratio)*slice_width),1])
+
+          centrox=np.array(result.centroides)[info_d_surcos[r]['ubic'],:]
+          kmeans = KMeans(n_clusters=np.min([int(n),len(centrox)])).fit(centrox)
+          centro_imagen=np.ceil(kmeans.cluster_centers_).astype(int)
+          tam_v=np.min([ima.shape[0]-1,ima.shape[1]-1,int(0.9*(np.abs(info_d_surcos[r]['ecuac'](info_d_surcos[r]['x_i_x_f'][0]+slice_width/2)-info_d_surcos[r]['ecuac'](info_d_surcos[r]['x_i_x_f'][0]))+dist_b))])
+          for c in tqdm(range(len(centro_imagen))):
+
+            shift_amount=[np.max([centro_imagen[c][0]-int(slice_width//2),0]),np.max([centro_imagen[c][1]-tam_v,0])]
+            prediction_result = get_prediction(
+                image=ima[shift_amount[1]:min([centro_imagen[c][1]+tam_v,slice_image_result.original_image_height-1]),
+                          shift_amount[0]:min([centro_imagen[c][0]+int(slice_width//2),slice_image_result.original_image_width-1])],
+                detection_model=detection_model,
+                image_size=image_size,
+                shift_amount=shift_amount,
+                full_shape=[
+                    slice_image_result.original_image_height,
+                    slice_image_result.original_image_width,
+                ],
+            )
+            object_prediction_list.extend(prediction_result.object_prediction_list)
     del result, ima
     
 # 160622----------------------------------------------------------------------------------------------
