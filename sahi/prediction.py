@@ -22,6 +22,7 @@ from sahi.annotation import ObjectAnnotation
 from sahi.utils.coco import CocoAnnotation, CocoPrediction
 from sahi.utils.cv import read_image_as_pil, visualize_object_predictions
 from sahi.utils.file import Path
+from sahi.utils.resol_cal import cal_resolucion
 
 def mascara(object_prediction_list):
   mask=np.zeros(object_prediction_list[0].mask.full_shape,dtype=bool)
@@ -581,6 +582,7 @@ class PredictionResult:
         dist_rec=np.mean([np.abs(info_d_surcos[k]['ecuac'][0]-info_d_surcos[k+1]['ecuac'][0])/np.sqrt(1+media_d_pendientes**2) for k in range(len(info_d_surcos)-1)])
         d_surco_metros=d_surco_metros*dist_b/dist_rec
         pix_surco=int(dist_b)
+        resol=cal_resolucion(self.image,d_surco_metros)
         
         
 #         comente1406
@@ -667,7 +669,8 @@ class PredictionResult:
                                           'promedio':np.mean(np.array(dist_real)),'desv_std':np.std(np.array(dist_real)),
                                           'CV':np.std(np.array(dist_real))/np.mean(np.array(dist_real))}
         
-        return {'rotacion': rotacion*180/np.pi,'resolucion_rotacion' : d_surco_metros/pix_surco,'resolucion_orig': d_surco_metros/pix_surco,'resumen':resumen}
+#         return {'rotacion': rotacion*180/np.pi,'resolucion_rotacion' : d_surco_metros/pix_surco,'resolucion_orig': d_surco_metros/pix_surco,'resumen':resumen}
+        return {'rotacion': rotacion*180/np.pi,'resolucion_rotacion' : resol,'resolucion_orig': resol,'resumen':resumen}
            
     def export_visuals(self, export_dir: str = "demo_data/", export_file: str = "prediction_visual", text_size: float = None, text_th: float = None, rect_th: int = None, 
                        etiqueta: int =None, centro: int = None, lineas: int =None, clear=None, export_format: str = "png"):
