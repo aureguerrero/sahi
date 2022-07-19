@@ -621,14 +621,14 @@ class PredictionResult:
         resumen=[]
         id=1
         for p,t in zip(lineas,info_d_surcos):
-                    area=[len(np.where(self.object_prediction_list[l].mask.bool_mask==True)[0])*(resol*100)**2 for l in t['ubic']]
+          area=[len(np.where(self.object_prediction_list[l].mask.bool_mask==True)[0])*(resol*100)**2 for l in t['ubic']]
           dist=[np.sqrt((p(centros[t['ubic'][l]][0])-p(centros[t['ubic'][l+1]][0]))**2
                                  +(centros[t['ubic'][l]][0]-centros[t['ubic'][l+1]][0])**2)*(resol*100) for l in range(len(t['ubic'])-1)]
           dist_real=[np.sqrt((centros[t['ubic'][l]][1]-centros[t['ubic'][l+1]][1])**2
                                  +(centros[t['ubic'][l]][0]-centros[t['ubic'][l+1]][0])**2)*(resol*100) for l in range(len(t['ubic'])-1)]
           resumen.append({'id':id,'recta': p,
                          'largo':np.sqrt((p(centros[t['ubic'][0]][0])-p(centros[t['ubic'][-1]][0]))**2
-                                 +(centros[t['ubic'][0]][0]-centros[t['ubic'][-1]][0])**2)*(resol*100/)
+                                 +(centros[t['ubic'][0]][0]-centros[t['ubic'][-1]][0])**2)*(resol*100)
 # ---------------------190722----------------------------------
 #           area=[len(np.where(self.object_prediction_list[l].mask.bool_mask==True)[0])*(d_surco_metros*100/(pix_surco))**2 for l in t['ubic']]
 #           dist=[np.sqrt((p(centros[t['ubic'][l]][0])-p(centros[t['ubic'][l+1]][0]))**2
