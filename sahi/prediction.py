@@ -580,8 +580,10 @@ class PredictionResult:
         media_d_pendientes=np.mean([k['ecuac'][1] for k in info_d_surcos])
         dist_b=np.mean([np.abs(info_d_surcos[k]['ecuac'][0]-info_d_surcos[k+1]['ecuac'][0]) for k in range(len(info_d_surcos)-1)])
         dist_rec=np.mean([np.abs(info_d_surcos[k]['ecuac'][0]-info_d_surcos[k+1]['ecuac'][0])/np.sqrt(1+media_d_pendientes**2) for k in range(len(info_d_surcos)-1)])
-        d_surco_metros=d_surco_metros*dist_b/dist_rec
-        pix_surco=int(dist_b)
+#------------190722--------------------
+#         d_surco_metros=d_surco_metros*dist_b/dist_rec
+#         pix_surco=int(dist_b)
+# ------------190722----------------y agregué linea siguiente
         resol=cal_resolucion(self.image,d_surco_metros)
         
         
@@ -619,14 +621,23 @@ class PredictionResult:
         resumen=[]
         id=1
         for p,t in zip(lineas,info_d_surcos):
-          area=[len(np.where(self.object_prediction_list[l].mask.bool_mask==True)[0])*(d_surco_metros*100/(pix_surco))**2 for l in t['ubic']]
+                    area=[len(np.where(self.object_prediction_list[l].mask.bool_mask==True)[0])*(resol*100)**2 for l in t['ubic']]
           dist=[np.sqrt((p(centros[t['ubic'][l]][0])-p(centros[t['ubic'][l+1]][0]))**2
-                                 +(centros[t['ubic'][l]][0]-centros[t['ubic'][l+1]][0])**2)*(d_surco_metros*100/(pix_surco)) for l in range(len(t['ubic'])-1)]
+                                 +(centros[t['ubic'][l]][0]-centros[t['ubic'][l+1]][0])**2)*(resol*100) for l in range(len(t['ubic'])-1)]
           dist_real=[np.sqrt((centros[t['ubic'][l]][1]-centros[t['ubic'][l+1]][1])**2
-                                 +(centros[t['ubic'][l]][0]-centros[t['ubic'][l+1]][0])**2)*(d_surco_metros*100/(pix_surco)) for l in range(len(t['ubic'])-1)]
+                                 +(centros[t['ubic'][l]][0]-centros[t['ubic'][l+1]][0])**2)*(resol*100) for l in range(len(t['ubic'])-1)]
           resumen.append({'id':id,'recta': p,
                          'largo':np.sqrt((p(centros[t['ubic'][0]][0])-p(centros[t['ubic'][-1]][0]))**2
-                                 +(centros[t['ubic'][0]][0]-centros[t['ubic'][-1]][0])**2)*(d_surco_metros*100/(pix_surco))
+                                 +(centros[t['ubic'][0]][0]-centros[t['ubic'][-1]][0])**2)*(resol*100/)
+# ---------------------190722----------------------------------
+#           area=[len(np.where(self.object_prediction_list[l].mask.bool_mask==True)[0])*(d_surco_metros*100/(pix_surco))**2 for l in t['ubic']]
+#           dist=[np.sqrt((p(centros[t['ubic'][l]][0])-p(centros[t['ubic'][l+1]][0]))**2
+#                                  +(centros[t['ubic'][l]][0]-centros[t['ubic'][l+1]][0])**2)*(d_surco_metros*100/(pix_surco)) for l in range(len(t['ubic'])-1)]
+#           dist_real=[np.sqrt((centros[t['ubic'][l]][1]-centros[t['ubic'][l+1]][1])**2
+#                                  +(centros[t['ubic'][l]][0]-centros[t['ubic'][l+1]][0])**2)*(d_surco_metros*100/(pix_surco)) for l in range(len(t['ubic'])-1)]
+#           resumen.append({'id':id,'recta': p,
+#                          'largo':np.sqrt((p(centros[t['ubic'][0]][0])-p(centros[t['ubic'][-1]][0]))**2
+#                                  +(centros[t['ubic'][0]][0]-centros[t['ubic'][-1]][0])**2)*(d_surco_metros*100/(pix_surco))
                          ,'plantas':t['ubic'],
                          'area':area,
                          'stadist_area':{'cant_plt':len(t['ubic']),'min':np.min(np.array(area)), 'max':np.max(np.array(area)),
