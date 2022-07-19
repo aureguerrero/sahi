@@ -181,7 +181,7 @@ def fftLines(image,fft_threshold=0.93):
 #======================================================================================
 
 def cal_resolucion(inputImage, d_surco_metros):
-    image = read_image_as_pil(inputImage)
+    image = np.array(read_image_as_pil(inputImage))
 #     image = cv2.imread(inputImage)
     a_channel_threshold,vari_threshold = detectPlantsRGB(image)
     plantas_umbralizadas = a_channel_threshold*vari_threshold
