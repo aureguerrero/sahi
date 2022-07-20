@@ -181,13 +181,14 @@ def fftLines(image,fft_threshold=0.93):
 #======================================================================================
 
 def cal_resolucion(inputImage, d_surco_metros):
-    image = np.array(read_image_as_pil(inputImage))
+    plantas_umbralizadas = np.array(read_image_as_pil(inputImage))
+#     image = np.array(read_image_as_pil(inputImage))
 #     image = cv2.imread(inputImage)
-    a_channel_threshold,vari_threshold = detectPlantsRGB(image)
-    plantas_umbralizadas = a_channel_threshold*vari_threshold
-    r = image[:,:,2].astype('float')
-    g = image[:,:,1].astype('float')
-    b = image[:,:,0].astype('float')
+#     a_channel_threshold,vari_threshold = detectPlantsRGB(image)
+#     plantas_umbralizadas = a_channel_threshold*vari_threshold
+#     r = image[:,:,2].astype('float')
+#     g = image[:,:,1].astype('float')
+#     b = image[:,:,0].astype('float')
    
     # Calculo la FFT para direccion de linea de siembra    
     #-----------------------------------------------------------------------------
@@ -208,12 +209,12 @@ def cal_resolucion(inputImage, d_surco_metros):
 
     # Roto imgs
     img_lines_aux_norm_rotada = rotate(img_lines_aux_norm, angulo, reshape=False, mode='nearest')
-    rgb = np.dstack((b,g,r)).astype('uint8') #For openCV
-    #rgb = np.dstack((r,g,b)).astype('uint8')  #For Matplotlib
-    rgb_rotada = rotate(rgb, angulo, reshape=False, mode='nearest')
-    #vari_umbralizado_rotada = rotate(plantas_umbralizadas, angulo, reshape=False, mode='nearest')
-    vari_umbralizado_rotada = rotate(vari_threshold, angulo, reshape=False, mode='nearest')
-    a_thr_umbralizado_rotada = rotate(a_channel_threshold, angulo, reshape=False, mode='nearest')
+#     rgb = np.dstack((b,g,r)).astype('uint8') #For openCV
+#     #rgb = np.dstack((r,g,b)).astype('uint8')  #For Matplotlib
+#     rgb_rotada = rotate(rgb, angulo, reshape=False, mode='nearest')
+#     #vari_umbralizado_rotada = rotate(plantas_umbralizadas, angulo, reshape=False, mode='nearest')
+#     vari_umbralizado_rotada = rotate(vari_threshold, angulo, reshape=False, mode='nearest')
+#     a_thr_umbralizado_rotada = rotate(a_channel_threshold, angulo, reshape=False, mode='nearest')
 
     # Saco Zona de interés
     height,width = img_lines_aux_norm_rotada.shape
