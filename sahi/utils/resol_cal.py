@@ -220,8 +220,14 @@ def cal_resolucion(inputImage, d_surco_metros):
     proporcion=0.5
     y_crop_top = int(height*(proporcion/2))
     medio=int(np.median(np.arange(0,height)))
-    proporcion=2*np.min([np.max([entreLineas[np.max(np.where(entreLineas<759)[0])]-10,0])
-                         ,np.max([height-entreLineas[np.min(np.where(entreLineas>759)[0])]+10,0]),y_crop_top])/height
+    img_lines_aux = np.zeros_like(img_lines_aux_norm_rotada)
+    img_lines_aux [ img_lines_aux_norm_rotada >= 0.2] = 0
+    img_lines_aux [ img_lines_aux_norm_rotada < 0.2] = 1
+    skele_new = skeletonize(img_lines_aux)
+    transecta = skele_new[y_crop_top:y_crop_bottom,int(width*0.5)]
+    entreLineas = np.where(transecta==1)
+    proporcion=2*np.min([np.max([entreLineas[np.max(np.where(entreLineas<medio)[0])]-10,0]),
+                         np.max([height-entreLineas[np.min(np.where(entreLineas>medio)[0])]+10,0]),y_crop_top])/height
     y_crop_top,y_crop_bottom,x_crop_left,x_crop_rigth,entreLineas = recortoZonaSinCortarLineas(img_lines_aux_norm_rotada,proporcion)
     Nsurcos   = np.max([len(entreLineas[0]) -1,1])
     pix_surco = ( entreLineas[0][-1] - entreLineas[0][0] ) / Nsurcos
