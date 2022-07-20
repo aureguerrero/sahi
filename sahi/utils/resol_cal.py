@@ -50,7 +50,6 @@ def recortoZonaSinCortarLineas(img_lines_aux_norm_rotada,proporcion):
     height,width = img_lines_aux_norm_rotada.shape
 
     y_crop_top = int(height*(proporcion/2))
-    if y_crop_top>0:
     y_crop_bottom =np.min([ -y_crop_top,-1])
     x_crop_left = int(width*(proporcion/2))
     x_crop_rigth = np.min([-x_crop_left,-1])
