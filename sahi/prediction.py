@@ -584,7 +584,7 @@ class PredictionResult:
 #         d_surco_metros=d_surco_metros*dist_b/dist_rec
 #         pix_surco=int(dist_b)
 # ------------190722----------------y agregué linea siguiente
-        resol=cal_resolucion(self.image,d_surco_metros)
+        resol=cal_resolucion(self.mascaras(),d_surco_metros)
         
         
 #         comente1406
