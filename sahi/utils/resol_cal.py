@@ -224,7 +224,7 @@ def cal_resolucion(inputImage, d_surco_metros):
     img_lines_aux [ img_lines_aux_norm_rotada >= 0.2] = 0
     img_lines_aux [ img_lines_aux_norm_rotada < 0.2] = 1
     skele_new = skeletonize(img_lines_aux)
-    transecta = skele_new[y_crop_top:y_crop_bottom,int(width*0.5)]
+    transecta = skele_new[:,int(width*0.5)]
     entreLineas = np.where(transecta==1)
     proporcion=2*np.min([np.max([entreLineas[np.max(np.where(entreLineas<medio)[0])]-10,0]),
                          np.max([height-entreLineas[np.min(np.where(entreLineas>medio)[0])]+10,0]),y_crop_top])/height
