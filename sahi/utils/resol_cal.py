@@ -50,9 +50,10 @@ def recortoZonaSinCortarLineas(img_lines_aux_norm_rotada,proporcion):
     height,width = img_lines_aux_norm_rotada.shape
 
     y_crop_top = int(height*(proporcion/2))
-    y_crop_bottom = -y_crop_top
+    if y_crop_top>0:
+    y_crop_bottom =np.min([ -y_crop_top,-1])
     x_crop_left = int(width*(proporcion/2))
-    x_crop_rigth = -x_crop_left
+    x_crop_rigth = np.min([-x_crop_left,-1])
 
     img_lines_aux = np.zeros_like(img_lines_aux_norm_rotada)
     img_lines_aux [ img_lines_aux_norm_rotada >= 0.2] = 0
@@ -216,8 +217,14 @@ def cal_resolucion(inputImage, d_surco_metros):
     a_thr_umbralizado_rotada = rotate(a_channel_threshold, angulo, reshape=False, mode='nearest')
 
     # Saco Zona de interés
-    y_crop_top,y_crop_bottom,x_crop_left,x_crop_rigth,entreLineas = recortoZonaSinCortarLineas(img_lines_aux_norm_rotada,0.5)
-    Nsurcos   = len(entreLineas[0]) -1
+    height,width = img_lines_aux_norm_rotada.shape
+    proporcion=0.5
+    y_crop_top = int(height*(proporcion/2))
+    medio=int(np.median(np.arange(0,height)))
+    proporcion=2*np.min([np.max([entreLineas[np.max(np.where(entreLineas<759)[0])]-10,0])
+                         ,np.max([height-entreLineas[np.min(np.where(entreLineas>759)[0])]+10,0]),y_crop_top])/height
+    y_crop_top,y_crop_bottom,x_crop_left,x_crop_rigth,entreLineas = recortoZonaSinCortarLineas(img_lines_aux_norm_rotada,proporcion)
+    Nsurcos   = np.max([len(entreLineas[0]) -1,1])
     pix_surco = ( entreLineas[0][-1] - entreLineas[0][0] ) / Nsurcos
     return d_surco_metros / pix_surco  
 
