@@ -705,7 +705,7 @@ class PredictionResult:
             centro=np.array(centro)
             ptos[centro[:,1],centro[:,0],:]=255
             kernel = np.ones((7,7),np.uint8)
-            image = cv2.addWeighted(image, 1, cv2.dilate(ptos,kernel,iterations = 1), 0.8, 0)
+#             image = cv2.addWeighted(image, 1, cv2.dilate(ptos,kernel,iterations = 1), 0.8, 0)
 #             for i in centro:
 #                 cv2.circle(image, i, 21, (0, 255, 0), 0.4) #cv2.circle(image, i, 7, (255, 255, 255), -1)
         if lineas is not None and lineas !=0:
