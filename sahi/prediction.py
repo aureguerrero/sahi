@@ -621,7 +621,7 @@ class PredictionResult:
         resumen=[]
         id=1
         for p,t in zip(lineas,info_d_surcos):
-          area=[len(np.where(self.object_prediction_list[l].mask.bool_mask==True)[0])*(resol*100)**2 for l in t['ubic']]
+          area=[self.object_prediction_list[l].to_shapely_annotation().area*(resol*100)**2 for l in t['ubic']]
           dist=[np.sqrt((p(centros[t['ubic'][l]][0])-p(centros[t['ubic'][l+1]][0]))**2
                                  +(centros[t['ubic'][l]][0]-centros[t['ubic'][l+1]][0])**2)*(resol*100) for l in range(len(t['ubic'])-1)]
           dist_real=[np.sqrt((centros[t['ubic'][l]][1]-centros[t['ubic'][l+1]][1])**2
@@ -705,9 +705,10 @@ class PredictionResult:
             centro=np.array(centro)
             ptos[centro[:,1],centro[:,0],:]=255
             kernel = np.ones((7,7),np.uint8)
-#             image = cv2.addWeighted(image, 1, cv2.dilate(ptos,kernel,iterations = 1), 0.8, 0)
+            image = cv2.addWeighted(image, 1, cv2.dilate(ptos,kernel,iterations = 1), 0.8, 0)
             for i in centro:
-                cv2.circle(image, i, 30, (255, 0, 0), 2) #cv2.circle(image, i, 7, (255, 255, 255), -1)
+                cv2.circle(image, i, 7, (255, 255, 255), -1)
+#                 cv2.circle(image, i, 30, (255, 0, 0), 2)
         if lineas is not None and lineas !=0:
            lineas,info_d_surcos=self.lineas()
            for i in info_d_surcos:
