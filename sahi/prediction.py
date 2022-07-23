@@ -386,7 +386,7 @@ class PredictionResult:
             ubic=ubic[orden]
             datos=centros[ubic,:]
             if rectas[0].coef[0]<0:
-              media_altura=np.mean(np.array([np.max(self.object_prediction_list[l].mask.shape[1:2])/np.cos(np.arctan(rectas[0].coef[0])+np.pi/2) for l in ubic]))
+              media_altura=np.mean(np.array([0.5*np.max(self.object_prediction_list[l].mask.shape[1:2])/np.cos(np.arctan(rectas[0].coef[0])+np.pi/2) for l in ubic]))
             else:
               media_altura=np.mean(np.array([0.5*np.max(self.object_prediction_list[l].mask.shape[1:2])/np.sin(np.arctan(rectas[0].coef[0])+np.pi/2) for l in ubic]))
             media_altura=np.min([media_altura,dist_media_rec])
