@@ -393,7 +393,7 @@ class PredictionResult:
             theilsen=RANSACRegressor(residual_threshold=media_altura).fit(np.expand_dims(datos[:,0],axis=1),datos[:,1])
             info_d_surcos.append({'entre_rec':[rectas[i],rectas[i+1]],'ubic': ubic,'ecuac':np.poly1d([theilsen.estimator_.coef_[0],theilsen.estimator_.intercept_]),'x_i_x_f':[np.min(centros[ubic,0]),np.max(centros[ubic,0])],'inliers': theilsen.inlier_mask_})
             for t in range(len(info_d_surcos[-1]['inliers'])):
-              if ((info_d_surcos[-1]['inliers'][t]==False) or ((np.abs(info_d_surcos[-1]['ecuac'](datos[t,0])-datos[t,1])/np.sqrt(1+theilsen.estimator_.coef_[0]**2))>media_altura)) and clear is not None:
+              if ((info_d_surcos[-1]['inliers'][t]==False) or ((np.abs(info_d_surcos[-1]['ecuac'](datos[t,0])-datos[t,1])/np.sqrt(1+theilsen.estimator_.coef_[0]**2))>media_altura)) and (clear is not None):
                 ptos_a_sacar.append(info_d_surcos[-1]['ubic'][t])
 #             if clear is not None:
 #               info_d_surcos[-1]['ubic']=[info_d_surcos[-1]['ubic'][u] for u in range(len(info_d_surcos[-1]['ubic'])) if info_d_surcos[-1]['inliers'][u]==True]
@@ -421,9 +421,9 @@ class PredictionResult:
               info_d_surcos[r]['ubic']=info_d_surcos[r]['ubic'][orden]
               datos=centros[info_d_surcos[r]['ubic'],:]
               if rectas[0].coef[0]<0:
-                media_altura=np.mean(0.4*np.array([np.mean(np.array(self.object_prediction_list[l].mask.shape))/np.cos(np.arctan(rectas[0].coef[0])+np.pi/2) for l in info_d_surcos[r]['ubic']]))
+                media_altura=np.mean(0.5*np.array([np.mean(np.array(self.object_prediction_list[l].mask.shape))/np.cos(np.arctan(rectas[0].coef[0])+np.pi/2) for l in info_d_surcos[r]['ubic']]))
               else:
-                media_altura=np.mean(0.4*np.array([np.mean(np.array(self.object_prediction_list[l].mask.shape))/np.sin(np.arctan(rectas[0].coef[0])+np.pi/2) for l in info_d_surcos[r]['ubic']]))
+                media_altura=np.mean(0.5*np.array([np.mean(np.array(self.object_prediction_list[l].mask.shape))/np.sin(np.arctan(rectas[0].coef[0])+np.pi/2) for l in info_d_surcos[r]['ubic']]))
               media_altura=np.min([media_altura,dist_media_rec])
               
               theilsen=RANSACRegressor(residual_threshold=media_altura).fit(np.expand_dims(datos[:,0],axis=1),datos[:,1])
